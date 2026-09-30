@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Egg Hen Market | Luxury Poultry & Egg Trading</title>
+  <meta name="description" content="Imperial Administrative console for user management, poultry flock plans, wholesale egg rates, deposits, withdrawals, and financial reports." />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- ADMIN AUTH GATE OVERLAY (Security protection for unauthorized users) -->
+  <div id="admin-auth-guard" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(7,11,14,0.96); backdrop-filter:blur(18px); align-items:center; justify-content:center; padding:1.5rem;">
+    <div class="glass-panel" style="max-width:420px; width:100%; padding:2.2rem; text-align:center;">
+      <div class="brand-icon-wrap" style="margin:0 auto 1rem; width:54px; height:54px; font-size:1.7rem; color:var(--gold-primary);">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2 style="font-size:1.3rem; font-weight:700; color:#FFF; margin-bottom:0.4rem;">Restricted Executive Suite</h2>
+      <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+        This portal requires authorized Administrator credentials. Please enter Admin PIN / Password to authenticate.
+      </p>
+
+      <form onsubmit="window.EHMAdmin.handleAdminGateAuth(event)" style="display:flex; flex-direction:column; gap:1rem;">
+        <div>
+          <input type="password" id="admin-gate-pass" class="form-input" style="width:100%; text-align:center; font-size:1.1rem; letter-spacing:0.2em;" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-gold" style="padding:0.75rem;">
+          <i class="fa-solid fa-lock-open"></i> Authenticate Controller
+        </button>
+        <a href="user.html" class="btn-outline-gold" style="padding:0.5rem; font-size:0.78rem;">
+          <i class="fa-solid fa-arrow-left"></i> Return to User Portal
+        </a>
+      </form>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+    
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <div class="brand-badge">
+          <div class="brand-icon-wrap" style="width:36px; height:36px; font-size:1.1rem;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <span class="brand-name" style="font-size:1.05rem;">EHM CONTROLLER</span>
+            <div style="font-size:0.7rem; color:var(--text-gold);">Imperial Executive Suite</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="admin-nav-menu">
+        <a href="#dashboard" class="admin-nav-link active" data-admin-tab="dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Dashboard Overview</span>
+        </a>
+        <a href="#users" class="admin-nav-link" data-admin-tab="users">
+          <i class="fa-solid fa-users-gear"></i>
+          <span>User Management</span>
+          <span class="badge-status active" id="sidebar-badge-users" style="margin-left:auto; font-size:0.68rem; padding:0.1rem 0.4rem;">0</span>
+        </a>
+        <a href="#deposits" class="admin-nav-link" data-admin-tab="deposits">
+          <i class="fa-solid fa-money-bill-transfer"></i>
+          <span>Deposits Requests</span>
+          <span class="badge-status pending" id="sidebar-badge-deposits" style="margin-left:auto; font-size:0.68rem; padding:0.1rem 0.4rem;">0</span>
+        </a>
+        <a href="#withdrawals" class="admin-nav-link" data-admin-tab="withdrawals">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+          <span>Withdrawals Requests</span>
+          <span class="badge-status pending" id="sidebar-badge-withdrawals" style="margin-left:auto; font-size:0.68rem; padding:0.1rem 0.4rem;">0</span>
+        </a>
+        <a href="#egg-requests" class="admin-nav-link" data-admin-tab="egg-requests">
+          <i class="fa-solid fa-egg"></i>
+          <span>Egg Sell Orders</span>
+          <span class="badge-status pending" id="sidebar-badge-eggs" style="margin-left:auto; font-size:0.68rem; padding:0.1rem 0.4rem;">0</span>
+        </a>
+        <a href="#purchases" class="admin-nav-link" data-admin-tab="purchases">
+          <i class="fa-solid fa-cart-flatbed"></i>
+          <span>Hen / Plan Purchases</span>
+        </a>
+        <a href="#packages" class="admin-nav-link" data-admin-tab="packages">
+          <i class="fa-solid fa-box-open"></i>
+          <span>Hen Packages</span>
+        </a>
+        <a href="#market" class="admin-nav-link" data-admin-tab="market">
+          <i class="fa-solid fa-tags"></i>
+          <span>Egg & Market Rates</span>
+        </a>
+        <a href="#referrals" class="admin-nav-link" data-admin-tab="referrals">
+          <i class="fa-solid fa-sitemap"></i>
+          <span>Referrals & Commissions</span>
+        </a>
+        <a href="#transactions" class="admin-nav-link" data-admin-tab="transactions">
+          <i class="fa-solid fa-receipt"></i>
+          <span>Transactions Ledger</span>
+        </a>
+        <a href="#analytics" class="admin-nav-link" data-admin-tab="analytics">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Analytics & Reports</span>
+        </a>
+        <a href="#broadcast" class="admin-nav-link" data-admin-tab="broadcast">
+          <i class="fa-solid fa-bullhorn"></i>
+          <span>Broadcast Alerts</span>
+        </a>
+        <a href="#settings" class="admin-nav-link" data-admin-tab="settings">
+          <i class="fa-solid fa-sliders"></i>
+          <span>System Settings</span>
+        </a>
+      </nav>
+
+      <div style="padding:1rem 1.25rem; border-top:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:0.5rem;">
+        <a href="user.html" class="btn-gold" style="padding:0.45rem; font-size:0.78rem;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open User Website
+        </a>
+        <button class="btn-outline-gold" style="padding:0.45rem; font-size:0.78rem; color:#EF4444; border-color:rgba(239,68,68,0.3);" onclick="window.EHMAdmin.logoutAdmin()">
+          <i class="fa-solid fa-right-from-bracket"></i> Lock Console
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEWPORT -->
+    <div class="admin-main-viewport">
+      
+      <!-- TOP BAR -->
+      <header class="admin-topbar">
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <button class="modal-close-btn" id="admin-mobile-menu-toggle" style="display:none;" aria-label="Toggle Navigation">
+            <i class="fa-solid fa-bars" style="font-size:1.2rem; color:var(--gold-light);"></i>
+          </button>
+          <div>
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Master Administration</span>
+            <h2 style="font-size:1.15rem; font-weight:700; color:#FFF;">Imperial Poultry & Egg Exchange</h2>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.85rem;">
+          <div style="text-align:right; font-size:0.78rem;">
+            <div style="font-weight:700; color:var(--gold-light);">Controller Admin</div>
+            <div style="color:var(--emerald-primary); display:flex; align-items:center; gap:0.3rem; justify-content:flex-end;">
+              <span class="status-dot-active" style="width:6px; height:6px;"></span>
+              <span id="admin-sync-indicator">Backend DB Synced</span>
+            </div>
+          </div>
+          <button class="btn-outline-gold" style="padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="window.EHMStore.syncWithServer(); window.EHMApp.showToast('Synchronized with shared database!', 'success');" title="Force DB Sync">
+            <i class="fa-solid fa-rotate"></i> Sync
+          </button>
+          <div style="width:36px; height:36px; border-radius:50%; background:var(--gold-gradient); display:flex; align-items:center; justify-content:center; color:#070B0E; font-weight:700;">
+            A
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <div class="admin-content-area">
+
+        <!-- SECTION 1: DASHBOARD OVERVIEW -->
+        <div id="section-dashboard" class="admin-tab-section">
+          
+          <!-- 1. User Accounts & Referrals Group -->
+          <div class="admin-metric-group-title">
+            <i class="fa-solid fa-users" style="color:#0284C7;"></i>
+            User Accounts & Referrals
+          </div>
+          <div class="admin-metric-group-subtitle">
+            Metrics for registered users, registration flow today, and referral commissions.
+          </div>
+
+          <div class="admin-stats-grid">
+            <div class="admin-stat-card gradient-cyan" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('users')" title="Manage Users">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-users"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL USERS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-users">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-red">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-user-plus"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TODAY'S USERS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-today-users">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-orange" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('purchases')" title="View Active Plans">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-chart-line"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">ACTIVE INVESTMENT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-active-investments">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-purple" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('referrals')" title="View Referral Commissions">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-percent"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TODAY'S COMMISSION</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-today-commission">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-emerald" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('referrals')" title="View Total Commissions">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-coins"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL COMMISSION</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-commission">Rs.0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Deposits Overview Group -->
+          <div class="admin-metric-group-title">
+            <i class="fa-solid fa-wallet" style="color:#10B981;"></i>
+            Deposits Overview
+          </div>
+          <div class="admin-metric-group-subtitle">
+            Statistics for payment deposits, pending deposit logs, and transaction fees.
+          </div>
+
+          <div class="admin-stats-grid">
+            <div class="admin-stat-card gradient-emerald" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('deposits')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TODAY DEPOSIT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-today-deposit">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-orange" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('deposits')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-clock"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">PENDING DEPOSIT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-pending-deposit">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-purple" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('deposits')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-box-archive"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL DEPOSITED</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-deposited">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-orange" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('deposits')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-spinner"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">PENDING DEPOSITS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-pending-deposits-count">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-red" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('deposits')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-ban"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">REJECTED DEPOSITS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-rejected-deposits">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-cyan">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-percent"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">DEPOSITED CHARGE</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-deposited-charge">Rs.0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Egg Sell Overview Group -->
+          <div class="admin-metric-group-title">
+            <i class="fa-solid fa-egg" style="color:var(--gold-primary);"></i>
+            Egg Sell Overview
+          </div>
+          <div class="admin-metric-group-subtitle">
+            Statistics for payout egg sells, pending processing egg sells, and logs.
+          </div>
+
+          <div class="admin-stats-grid">
+            <div class="admin-stat-card gradient-red" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-egg"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TODAY EGGS SOLD</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-today-eggs-sold">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-red" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-arrow-up"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TODAY EGGS AMOUNT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-today-eggs-amount">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-orange" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-egg"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">PENDING EGGS QUANTITY</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-pending-eggs-qty">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-orange" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-clock"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">PENDING EGGS AMOUNT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-pending-eggs-amount">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-emerald" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-egg"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL EGGS QUANTITY</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-eggs-qty">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-emerald" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-money-bill-wave"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL EGGS AMOUNT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-eggs-amount">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-orange" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-rotate"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">PENDING EGG REQUESTS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-pending-egg-requests">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-red" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('egg-requests')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-ban"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">REJECTED EGG REQUESTS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-rejected-egg-requests">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Plan Investments Overview Group -->
+          <div class="admin-metric-group-title">
+            <i class="fa-solid fa-chart-column" style="color:#F59E0B;"></i>
+            Plan Investments Overview
+          </div>
+          <div class="admin-metric-group-subtitle">
+            Metrics for active schedules, purchased user packages, interest flow.
+          </div>
+
+          <div class="admin-stats-grid">
+            <div class="admin-stat-card gradient-cyan" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('purchases')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-cart-shopping"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TODAY BUY PLAN</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-today-buy-plan">0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-emerald" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('purchases')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-chart-simple"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL INVESTMENT</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-investment">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-purple">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-clock"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">TOTAL INTEREST</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-total-interest">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-emerald" style="cursor:pointer;" onclick="window.EHMAdmin.switchTab('purchases')">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-coins"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">ACTIVE INVESTMENTS</div>
+                <div class="admin-stat-number tabular-nums" id="admin-stat-active-investments-sum">Rs.0</div>
+              </div>
+            </div>
+
+            <div class="admin-stat-card gradient-red">
+              <div class="admin-stat-icon-wrap"><i class="fa-solid fa-lock"></i></div>
+              <div class="admin-stat-info">
+                <div class="admin-stat-label">CLOSED INVESTMENT</div>
+                <div class="admin-stat-number tabular-nums">Rs.0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Charts Preview on Dashboard -->
+          <div class="charts-grid-2">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h3 class="chart-card-title"><i class="fa-solid fa-chart-column" style="color:#0284C7;"></i> Monthly Deposit & Withdraw Report</h3>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-deposits-withdraws"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h3 class="chart-card-title"><i class="fa-solid fa-chart-line" style="color:#10B981;"></i> Transactions Report</h3>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-transactions-trend"></canvas>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SECTION 2: USERS MANAGEMENT -->
+        <div id="section-users" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Registered Poultry Investors</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Manage member accounts, inspect live balance reserves, and adjust parameters.</p>
+              </div>
+
+              <div style="display:flex; gap:0.65rem; align-items:center; flex-wrap:wrap;">
+                <div class="search-input-wrap">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" id="admin-users-search" class="form-input" placeholder="Search by name, phone, or ID..." />
+                </div>
+                <select id="admin-users-filter-status" class="form-input" style="background:#0C1417;">
+                  <option value="all">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+                <button class="btn-gold" style="padding:0.45rem 0.8rem; font-size:0.8rem;" onclick="window.EHMAdmin.openAddUserModal()">
+                  <i class="fa-solid fa-user-plus"></i> New User
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Investor / Phone</th>
+                    <th>Active Hens</th>
+                    <th>Available Eggs</th>
+                    <th>Wallet Balance</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: DEPOSITS MANAGEMENT -->
+        <div id="section-deposits" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Deposits Management & Verification</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Inspect proof of payment, review transaction references, and approve or reject deposit funds.</p>
+              </div>
+
+              <div style="display:flex; gap:0.65rem; align-items:center;">
+                <select id="admin-deposits-filter-status" class="form-input" style="background:#0C1417;">
+                  <option value="all">All Deposits</option>
+                  <option value="pending" selected>Pending Review</option>
+                  <option value="approved">Approved & Credited</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>Deposit ID</th>
+                    <th>User / Phone</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>TRX / Ref ID</th>
+                    <th>Requested At</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-deposits-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: WITHDRAWALS MANAGEMENT -->
+        <div id="section-withdrawals" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Withdrawals Requests & Disbursements</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Review payout recipient information, approve fund release, or reject with automatic wallet refund.</p>
+              </div>
+
+              <div style="display:flex; gap:0.65rem; align-items:center;">
+                <select id="admin-withdrawals-filter-status" class="form-input" style="background:#0C1417;">
+                  <option value="all">All Withdrawals</option>
+                  <option value="pending" selected>Pending Payout</option>
+                  <option value="approved">Approved / Disbursed</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>Withdrawal ID</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Account Title</th>
+                    <th>Account Number / IBAN</th>
+                    <th>Requested At</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-withdrawals-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 5: EGG SELL REQUESTS -->
+        <div id="section-egg-requests" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Egg Sell Orders & Wholesale Requests</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Manage member egg sell counter requests. Approving credits cash to user; rejecting refunds egg reserve.</p>
+              </div>
+
+              <div style="display:flex; gap:0.65rem; align-items:center;">
+                <select id="admin-eggs-filter-status" class="form-input" style="background:#0C1417;">
+                  <option value="all">All Sell Orders</option>
+                  <option value="pending" selected>Pending Approval</option>
+                  <option value="approved">Approved & Paid</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Buyer Partner</th>
+                    <th>Eggs Quantity</th>
+                    <th>Rate / Egg</th>
+                    <th>Total Payout</th>
+                    <th>Submitted At</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-eggs-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 6: HEN / PLAN PURCHASES -->
+        <div id="section-purchases" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Flock Plan Deployment & Purchases</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Audit flock investments, user active hens deployments, and yield schedules.</p>
+              </div>
+              <div>
+                <select id="admin-purchases-filter-status" class="form-input" style="background:#0C1417;">
+                  <option value="all">All Plans</option>
+                  <option value="approved" selected>Active & Producing</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>Purchase ID</th>
+                    <th>User</th>
+                    <th>Package Plan</th>
+                    <th>Hens Count</th>
+                    <th>Investment Amount</th>
+                    <th>Daily Expected Yield</th>
+                    <th>Deployment Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-purchases-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 7: HEN PACKAGES -->
+        <div id="section-packages" class="admin-tab-section" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+            <div>
+              <h3 style="font-size:1.15rem; font-weight:700; color:#FFF;">Hen Production Plan Management</h3>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Configure package prices, bird capacity, daily egg production, and duration.</p>
+            </div>
+            <button class="btn-gold" onclick="window.EHMAdmin.openAddPackageModal()">
+              <i class="fa-solid fa-plus"></i> Add New Package
+            </button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.25rem;" id="admin-packages-list">
+            <!-- Rendered via js/admin.js -->
+          </div>
+        </div>
+
+        <!-- SECTION 8: EGG & MARKET RATES -->
+        <div id="section-market" class="admin-tab-section" style="display:none;">
+          <div class="table-card" style="padding:1.5rem; margin-bottom:1.5rem;">
+            <h3 style="font-size:1.1rem; font-weight:700; color:#FFF; margin-bottom:0.25rem;">Wholesale Market Buyer Counters</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1.25rem;">
+              Set the live market price per egg offered to users by commercial partners. Changes immediately reflect on the user selling screen across the platform.
+            </p>
+            <div id="admin-buyers-manager-list">
+              <!-- Rendered via js/admin.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 9: REFERRALS & COMMISSIONS -->
+        <div id="section-referrals" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Referral Network & Commissions Ledger</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Audit affiliate rewards, verified uplines, and network tier bonuses dynamically credited from database.</p>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>Tx ID</th>
+                    <th>Beneficiary (Referrer)</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Commission Earned</th>
+                    <th>Bonus Eggs</th>
+                    <th>Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-referrals-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 10: TRANSACTIONS LEDGER -->
+        <div id="section-transactions" class="admin-tab-section" style="display:none;">
+          <div class="table-card">
+            <div class="table-header-bar">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#FFF;">Global Transactions Audit</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted);">Real-time ledger of purchases, wholesale sales, laying rewards, deposits, and withdrawals.</p>
+              </div>
+
+              <div>
+                <select id="admin-tx-filter-type" class="form-input" style="background:#0C1417;">
+                  <option value="All">All Transactions</option>
+                  <option value="Deposit">Deposits</option>
+                  <option value="Withdrawal">Withdrawals</option>
+                  <option value="Hen Purchase">Hen Purchases</option>
+                  <option value="Egg Sale">Egg Sales</option>
+                  <option value="Egg Earned">Daily Laying Yield</option>
+                  <option value="Referral Reward">Referral Bonuses</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="ehm-table">
+                <thead>
+                  <tr>
+                    <th>Tx ID</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-transactions-table-body">
+                  <!-- Rendered via js/admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 11: ANALYTICS & REPORTS -->
+        <div id="section-analytics" class="admin-tab-section" style="display:none;">
+          <div class="admin-metric-group-title">
+            <i class="fa-solid fa-chart-pie" style="color:var(--gold-primary);"></i>
+            Analytical Reports & Demographic Charts
+          </div>
+          <div class="admin-metric-group-subtitle">
+            Auditing device platforms, operating systems, and regional user origin.
+          </div>
+
+          <div class="charts-grid-3">
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h4 class="chart-card-title"><i class="fa-brands fa-chrome" style="color:#EF4444;"></i> Login By Browser</h4>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-login-browser"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h4 class="chart-card-title"><i class="fa-solid fa-laptop" style="color:#3B82F6;"></i> Login By OS</h4>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-login-os"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-card-header">
+                <h4 class="chart-card-title"><i class="fa-solid fa-earth-asia" style="color:#10B981;"></i> Login By Country</h4>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="chart-login-country"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 12: BROADCAST ALERTS -->
+        <div id="section-broadcast" class="admin-tab-section" style="display:none;">
+          <div class="glass-panel" style="padding:1.75rem; max-width:680px;">
+            <h3 style="font-size:1.15rem; font-weight:700; color:#FFF; margin-bottom:0.35rem;">
+              <i class="fa-solid fa-bullhorn" style="color:var(--gold-primary);"></i>
+              Broadcast System Announcement
+            </h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+              Push critical alerts or market updates directly to every user's notification drawer.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Announcement Title</label>
+                <input type="text" id="broadcast-notif-title" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="e.g., Egg Price Surge to Rs. 55!" />
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Announcement Body</label>
+                <textarea id="broadcast-notif-msg" class="form-input" style="width:100%; min-height:90px; margin-top:0.3rem;" placeholder="Detailed alert copy visible in user dashboards..."></textarea>
+              </div>
+
+              <button class="btn-gold" style="align-self:flex-start;" onclick="window.EHMAdmin.sendBroadcast()">
+                <i class="fa-solid fa-paper-plane"></i> Dispatch Broadcast Notification
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 13: SYSTEM SETTINGS -->
+        <div id="section-settings" class="admin-tab-section" style="display:none;">
+          <div class="glass-panel" style="padding:1.75rem; max-width:760px;">
+            <h3 style="font-size:1.15rem; font-weight:700; color:#FFF; margin-bottom:0.25rem;">
+              <i class="fa-solid fa-sliders" style="color:var(--gold-primary);"></i>
+              Core Marketplace Configuration
+            </h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1.5rem;">
+              Manage baseline rules, referral percentages, and government registration info.
+            </p>
+
+            <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.25rem;">
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Base Egg Benchmark Rate (Rs)</label>
+                <input type="number" id="settings-base-egg-rate" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Collection Interval (Seconds)</label>
+                <input type="number" id="settings-egg-timer" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Referral Commission Rate (%)</label>
+                <input type="number" id="settings-ref-comm" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Bonus Eggs Per New Referral</label>
+                <input type="number" id="settings-ref-eggs" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Marketplace Brand Name</label>
+                <input type="text" id="settings-site-name" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div>
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">WhatsApp Owner Contact</label>
+                <input type="text" id="settings-whatsapp-owner" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div style="grid-column:span 2;">
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">WhatsApp Admin Contact</label>
+                <input type="text" id="settings-whatsapp-admin" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+
+              <div style="grid-column:span 2;">
+                <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">FBR NTN Certification String</label>
+                <input type="text" id="settings-fbr-ntn" class="form-input" style="width:100%; margin-top:0.3rem;" />
+              </div>
+            </div>
+
+            <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+              <button class="btn-gold" onclick="window.EHMAdmin.saveAllSettings()">
+                <i class="fa-solid fa-floppy-disk"></i> Save Global Settings
+              </button>
+              <button class="btn-outline-gold" onclick="if(confirm('Reset all records to factory seed data?')) { window.EHMStore.resetToDefaults(); }">
+                <i class="fa-solid fa-rotate-left"></i> Reset to Factory Seed Data
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Deposit Proof & Action Modal -->
+  <div class="modal-overlay" id="modal-admin-deposit-proof">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-receipt" style="color:var(--gold-primary);"></i>
+          Deposit Verification
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-admin-deposit-proof">&times;</button>
+      </div>
+      <div>
+        <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1.25rem; margin-bottom:1.25rem; border:1px solid var(--border-gold);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Deposit Identifier:</span>
+            <strong id="deposit-modal-id" class="tabular-nums" style="color:var(--gold-light);">DEP-1001</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">User Account:</span>
+            <strong id="deposit-modal-user" style="color:#FFF;">@demo</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Amount to Credit:</span>
+            <strong id="deposit-modal-amount" class="tabular-nums" style="color:var(--emerald-primary); font-size:1.15rem;">Rs. 1,500</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Payment Gateway:</span>
+            <strong id="deposit-modal-method" style="color:#FFF;">JazzCash</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">TRX Reference / Proof:</span>
+            <strong id="deposit-modal-trx" class="tabular-nums" style="color:var(--gold-light); font-weight:700;">JC-99482103</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Submitted At:</span>
+            <span id="deposit-modal-date" style="color:var(--text-secondary); font-size:0.8rem;">2026-09-30 08:30 AM</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Admin Note / Verification Remark</label>
+          <input type="text" id="deposit-modal-note" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="e.g. Verified via JazzCash portal ref" />
+        </div>
+
+        <div style="display:flex; gap:0.75rem;" id="deposit-modal-actions">
+          <button class="btn-outline-gold" style="flex:1; color:#EF4444; border-color:rgba(239,68,68,0.4);" onclick="window.EHMAdmin.rejectDepositFromModal()">
+            <i class="fa-solid fa-ban"></i> Reject Deposit
+          </button>
+          <button class="btn-gold" style="flex:1;" onclick="window.EHMAdmin.approveDepositFromModal()">
+            <i class="fa-solid fa-check"></i> Approve & Credit Balance
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Withdrawal Details & Action Modal -->
+  <div class="modal-overlay" id="modal-admin-withdrawal-detail">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-hand-holding-dollar" style="color:var(--gold-primary);"></i>
+          Withdrawal Request Payout
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-admin-withdrawal-detail">&times;</button>
+      </div>
+      <div>
+        <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1.25rem; margin-bottom:1.25rem; border:1px solid var(--border-gold);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Request ID:</span>
+            <strong id="withdrawal-modal-id" class="tabular-nums" style="color:var(--gold-light);">WTH-1001</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Investor:</span>
+            <strong id="withdrawal-modal-user" style="color:#FFF;">@demo</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Payout Amount:</span>
+            <strong id="withdrawal-modal-amount" class="tabular-nums" style="color:var(--emerald-primary); font-size:1.15rem;">Rs. 2,500</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Payout Gateway:</span>
+            <strong id="withdrawal-modal-method" style="color:#FFF;">JazzCash</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Account Title:</span>
+            <strong id="withdrawal-modal-title" style="color:#FFF;">Sultan Agro Farms</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Account Number / IBAN:</span>
+            <strong id="withdrawal-modal-account" class="tabular-nums" style="color:var(--gold-light); font-weight:700;">0327272727</strong>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Admin Transfer Note</label>
+          <input type="text" id="withdrawal-modal-note" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="e.g. Disbursed via EasyPaisa portal" />
+        </div>
+
+        <div style="display:flex; gap:0.75rem;" id="withdrawal-modal-actions">
+          <button class="btn-outline-gold" style="flex:1; color:#EF4444; border-color:rgba(239,68,68,0.4);" onclick="window.EHMAdmin.rejectWithdrawalFromModal()">
+            <i class="fa-solid fa-ban"></i> Reject & Refund Wallet
+          </button>
+          <button class="btn-gold" style="flex:1;" onclick="window.EHMAdmin.approveWithdrawalFromModal()">
+            <i class="fa-solid fa-check"></i> Approve & Mark Disbursed
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Egg Sell Request Detail Modal -->
+  <div class="modal-overlay" id="modal-admin-egg-detail">
+    <div class="modal-card" style="max-width:480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-egg" style="color:var(--gold-primary);"></i>
+          Wholesale Egg Sell Order
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-admin-egg-detail">&times;</button>
+      </div>
+      <div>
+        <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1.25rem; margin-bottom:1.25rem; border:1px solid var(--border-gold);">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Order Identifier:</span>
+            <strong id="egg-modal-id" class="tabular-nums" style="color:var(--gold-light);">EGG-1001</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Seller (User):</span>
+            <strong id="egg-modal-user" style="color:#FFF;">@demo</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Buyer Partner:</span>
+            <strong id="egg-modal-buyer" style="color:var(--gold-light);">United Egg Suppliers #5</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Quantity of Eggs:</span>
+            <strong id="egg-modal-qty" class="tabular-nums" style="color:#FFF;">50 Eggs</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Market Rate:</span>
+            <strong id="egg-modal-rate" class="tabular-nums" style="color:var(--gold-light);">Rs. 55 / egg</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted); font-size:0.8rem;">Total Cash Payout:</span>
+            <strong id="egg-modal-total" class="tabular-nums" style="color:var(--emerald-primary); font-size:1.15rem;">Rs. 2,750</strong>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem;" id="egg-modal-actions">
+          <button class="btn-outline-gold" style="flex:1; color:#EF4444; border-color:rgba(239,68,68,0.4);" onclick="window.EHMAdmin.rejectEggSaleFromModal()">
+            <i class="fa-solid fa-ban"></i> Reject & Refund Eggs
+          </button>
+          <button class="btn-gold" style="flex:1;" onclick="window.EHMAdmin.approveEggSaleFromModal()">
+            <i class="fa-solid fa-check"></i> Approve & Credit Wallet
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Detail & Balance Adjustment Modal -->
+  <div class="modal-overlay" id="modal-admin-user-detail">
+    <div class="modal-card" style="max-width:540px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-user-pen" style="color:var(--gold-primary);"></i>
+          Investor Dossier & Balance Adjuster
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-admin-user-detail">&times;</button>
+      </div>
+      <div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.75rem;">
+          SYSTEM IDENTIFIER: <span id="admin-modal-user-id" class="tabular-nums" style="color:var(--gold-light); font-weight:700;"></span>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0.75rem; margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Full Name</label>
+            <input type="text" id="admin-modal-user-name" class="form-input" style="width:100%;" />
+          </div>
+          <div>
+            <label style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Phone Number</label>
+            <input type="text" id="admin-modal-user-phone" class="form-input" style="width:100%;" />
+          </div>
+          <div style="grid-column:span 2;">
+            <label style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Email Address</label>
+            <input type="email" id="admin-modal-user-email" class="form-input" style="width:100%;" />
+          </div>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.35); border:1px solid var(--border-gold); border-radius:12px; padding:1rem; margin-bottom:1rem;">
+          <div style="font-size:0.75rem; font-weight:700; color:var(--gold-light); text-transform:uppercase; margin-bottom:0.5rem;">
+            Direct Shared DB Balances (Admin Overwrite)
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.6rem;">
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted);">Wallet (Rs)</label>
+              <input type="number" id="admin-modal-user-balance" class="form-input" style="width:100%; font-weight:700;" />
+            </div>
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted);">Eggs Count</label>
+              <input type="number" id="admin-modal-user-eggs" class="form-input" style="width:100%; font-weight:700;" step="0.5" />
+            </div>
+            <div>
+              <label style="font-size:0.7rem; color:var(--text-muted);">Active Hens</label>
+              <input type="number" id="admin-modal-user-hens" class="form-input" style="width:100%; font-weight:700;" />
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Account State</label>
+          <select id="admin-modal-user-status" class="form-input" style="width:100%; background:#0C1417;">
+            <option value="active">Active (Full Trading Access)</option>
+            <option value="inactive">Inactive / Suspended</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Recent User Transactions</label>
+          <div id="admin-modal-user-txs"></div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem;">
+          <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-admin-user-detail">Cancel</button>
+          <button class="btn-gold" style="flex:2;" onclick="window.EHMAdmin.saveUserDetailChanges()">
+            <i class="fa-solid fa-floppy-disk"></i> Commit Changes to DB
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Package Edit / Add Modal -->
+  <div class="modal-overlay" id="modal-admin-package">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="package-modal-title">
+          <i class="fa-solid fa-box-open" style="color:var(--gold-primary);"></i>
+          Package Configuration
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-admin-package">&times;</button>
+      </div>
+      <div>
+        <div style="display:flex; flex-direction:column; gap:0.85rem;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Plan Name</label>
+            <input type="text" id="pkg-input-name" class="form-input" style="width:100%;" placeholder="e.g. 10 Hens Commercial Coop" />
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0.75rem;">
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Hens Count</label>
+              <input type="number" id="pkg-input-hens" class="form-input" style="width:100%;" />
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Price (Rs)</label>
+              <input type="number" id="pkg-input-price" class="form-input" style="width:100%;" />
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0.75rem;">
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Daily Egg Yield</label>
+              <input type="number" id="pkg-input-yield" class="form-input" style="width:100%;" step="0.1" />
+            </div>
+            <div>
+              <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Badge Tag</label>
+              <input type="text" id="pkg-input-tag" class="form-input" style="width:100%;" placeholder="Popular / Best Value" />
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Description</label>
+            <textarea id="pkg-input-desc" class="form-input" style="width:100%; min-height:60px;"></textarea>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Status</label>
+            <select id="pkg-input-status" class="form-input" style="width:100%; background:#0C1417;">
+              <option value="active">Active (Visible to Users)</option>
+              <option value="inactive">Inactive / Hidden</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+            <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-admin-package">Cancel</button>
+            <button class="btn-gold" style="flex:2;" onclick="window.EHMAdmin.savePackage()">
+              <i class="fa-solid fa-check"></i> Save Package
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

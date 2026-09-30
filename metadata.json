@@ -1,0 +1,6 @@
+{
+  "name": "Egg Hen Market - Luxury Poultry & Egg Trading Platform",
+  "description": "Premium fintech poultry marketplace and egg trading platform with real-time analytics, hen package management, egg harvesting, referral commissions, and administrative control.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

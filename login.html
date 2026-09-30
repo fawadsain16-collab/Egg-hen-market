@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Egg Hen Market | Luxury Poultry & Egg Trading</title>
+  <meta name="description" content="Access your Egg Hen Market poultry investment and egg trading portal." />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body style="display:flex; align-items:center; justify-content:center; min-height:100vh; padding:1.5rem;">
+
+  <div class="glass-panel" style="width:100%; max-width:440px; padding:2rem; position:relative; overflow:hidden;">
+    <div style="position:absolute; top:-30px; right:-30px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%); pointer-events:none;"></div>
+    
+    <!-- Brand Header -->
+    <div style="text-align:center; margin-bottom:1.75rem;">
+      <div class="brand-icon-wrap" style="margin:0 auto 0.85rem; width:52px; height:52px; font-size:1.6rem;">
+        <i class="fa-solid fa-egg"></i>
+      </div>
+      <h1 class="brand-name" style="font-size:1.45rem; margin-bottom:0.25rem;">EGG HEN MARKET</h1>
+      <p style="font-size:0.8rem; color:var(--text-secondary);">Imperial Poultry & Egg Trading Exchange</p>
+    </div>
+
+    <!-- Login Tabs -->
+    <div style="display:flex; background:rgba(0,0,0,0.35); border-radius:12px; padding:0.25rem; margin-bottom:1.5rem; border:1px solid var(--border-subtle);">
+      <button id="tab-user-btn" class="btn-gold" style="flex:1; padding:0.5rem; font-size:0.82rem; border-radius:10px;" onclick="switchLoginTab('user')">
+        <i class="fa-solid fa-user"></i> User Login
+      </button>
+      <button id="tab-admin-btn" style="flex:1; padding:0.5rem; font-size:0.82rem; background:transparent; border:none; color:var(--text-secondary); cursor:pointer; border-radius:10px;" onclick="switchLoginTab('admin')">
+        <i class="fa-solid fa-shield-halved"></i> Admin Portal
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" onsubmit="handleLoginSubmit(event)" style="display:flex; flex-direction:column; gap:1.1rem;">
+      <div>
+        <label id="label-username" style="display:block; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-gold); margin-bottom:0.4rem;">
+          Mobile Number / Username
+        </label>
+        <div style="position:relative;">
+          <input type="text" id="login-username" class="form-input" style="width:100%; padding-left:2.4rem;" placeholder="0327272727 or demo" required />
+          <i class="fa-solid fa-user" style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.85rem;"></i>
+        </div>
+      </div>
+
+      <div>
+        <label style="display:block; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-gold); margin-bottom:0.4rem;">
+          Account Password
+        </label>
+        <div style="position:relative;">
+          <input type="password" id="login-password" class="form-input" style="width:100%; padding-left:2.4rem;" placeholder="••••••••" required />
+          <i class="fa-solid fa-lock" style="position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.85rem;"></i>
+        </div>
+      </div>
+
+      <button type="submit" id="login-submit-btn" class="btn-gold" style="width:100%; margin-top:0.5rem; padding:0.75rem;">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Account
+      </button>
+    </form>
+
+    <!-- Demo Credentials Helper -->
+    <div style="margin-top:1.5rem; padding:0.85rem; background:rgba(212,175,55,0.06); border:1px dashed var(--border-gold); border-radius:12px; font-size:0.78rem;">
+      <div style="color:var(--gold-light); font-weight:700; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem;">
+        <i class="fa-solid fa-key"></i> Quick Demo Access
+      </div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <button type="button" class="btn-outline-gold" style="flex:1; padding:0.35rem 0.5rem; font-size:0.74rem;" onclick="fillCredentials('demo', 'demo123', 'user')">
+          Demo User (0327272727)
+        </button>
+        <button type="button" class="btn-outline-gold" style="flex:1; padding:0.35rem 0.5rem; font-size:0.74rem;" onclick="fillCredentials('admin', 'admin123', 'admin')">
+          Demo Admin
+        </button>
+      </div>
+    </div>
+
+    <!-- Direct Links -->
+    <div style="margin-top:1.25rem; text-align:center; font-size:0.78rem; color:var(--text-muted);">
+      <a href="user.html" style="color:var(--text-secondary); text-decoration:none; margin:0 0.5rem;">Direct User Website</a> ·
+      <a href="admin.html" style="color:var(--text-secondary); text-decoration:none; margin:0 0.5rem;">Direct Admin Panel</a>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let activeRole = 'user';
+
+    function switchLoginTab(role) {
+      activeRole = role;
+      const userBtn = document.getElementById('tab-user-btn');
+      const adminBtn = document.getElementById('tab-admin-btn');
+      const labelUser = document.getElementById('label-username');
+      const submitBtn = document.getElementById('login-submit-btn');
+
+      if (role === 'admin') {
+        adminBtn.className = 'btn-gold';
+        adminBtn.style.background = 'var(--gold-gradient)';
+        adminBtn.style.color = '#070B0E';
+        userBtn.className = '';
+        userBtn.style.background = 'transparent';
+        userBtn.style.color = 'var(--text-secondary)';
+        labelUser.textContent = 'Admin Username';
+        document.getElementById('login-username').placeholder = 'admin';
+        submitBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Access Admin Console';
+      } else {
+        userBtn.className = 'btn-gold';
+        userBtn.style.background = 'var(--gold-gradient)';
+        userBtn.style.color = '#070B0E';
+        adminBtn.className = '';
+        adminBtn.style.background = 'transparent';
+        adminBtn.style.color = 'var(--text-secondary)';
+        labelUser.textContent = 'Mobile Number / Username';
+        document.getElementById('login-username').placeholder = '0327272727 or demo';
+        submitBtn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In to Account';
+      }
+    }
+
+    function fillCredentials(user, pass, role) {
+      switchLoginTab(role);
+      document.getElementById('login-username').value = user;
+      document.getElementById('login-password').value = pass;
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value;
+
+      const res = await window.EHMStore.login(u, p);
+      if (res.success) {
+        window.EHMApp.showToast(`Welcome back! Redirecting to ${res.role.toUpperCase()} portal...`, 'success');
+        setTimeout(() => {
+          window.location.href = res.redirect;
+        }, 500);
+      } else {
+        window.EHMApp.showToast(res.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>
