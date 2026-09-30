@@ -424,7 +424,7 @@
       "id": "pkg-1",
       "name": "1 Hen Starter Pack",
       "hens": 1,
-      "price": 580,
+      "price": 1250,
       "dailyYield": 1,
       "durationDays": 365,
       "status": "active",

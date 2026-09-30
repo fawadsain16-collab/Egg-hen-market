@@ -6,34 +6,70 @@
 
 class UserDashboardController {
   constructor() {
+    window.EHMUser = this;
     this.countdownTimer = null;
     this.remainingSeconds = 45;
     this.selectedPackage = null;
     this.selectedBuyer = null;
-    this.init();
+    this.selectedDepositMethod = 'JazzCash';
+    this.user = this.getFallbackUser();
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.init());
+    } else {
+      this.init();
+    }
+  }
+
+  getFallbackUser() {
+    return {
+      id: 'USR-8821',
+      username: 'demo',
+      name: 'Sultan Agro Farms',
+      phone: '0327272727',
+      email: 'investor@egghenmarket.com',
+      balance: 14500,
+      availableEggs: 124.5,
+      totalEggsEarned: 890,
+      totalHens: 16,
+      purchasedHens: 16,
+      totalPurchasesAmount: 9280,
+      totalSalesAmount: 38400,
+      totalEggsSold: 820,
+      referralEggs: 45,
+      referralsCount: 7,
+      referralCode: 'EHM882',
+      referredBy: 'Imperial Founder'
+    };
   }
 
   init() {
+    this.updateUserState();
     this.renderAll();
     this.startCountdownTimer();
     this.bindEvents();
 
     // Listen to data store updates
     window.addEventListener('ehm_event', (e) => {
+      this.updateUserState();
       this.renderAll();
     });
   }
 
-  renderAll() {
-    const user = window.EHMStore.getCurrentUser();
-    if (!user || user.role === 'admin') {
-      // If admin opened user.html, default to demo user for preview
-      const demoUser = window.EHMStore.getUserByUsername('demo');
-      this.user = demoUser;
-    } else {
-      this.user = user;
+  updateUserState() {
+    if (window.EHMStore && typeof window.EHMStore.getCurrentUser === 'function') {
+      const u = window.EHMStore.getCurrentUser();
+      if (u && u.role !== 'admin') {
+        this.user = u;
+      } else if (u && u.role === 'admin') {
+        const demoUser = window.EHMStore.getUserByUsername('demo');
+        this.user = demoUser || this.user;
+      }
     }
+  }
 
+  renderAll() {
+    this.updateUserState();
     this.renderHeader();
     this.renderMainBalance();
     this.renderHenPackages();
@@ -45,18 +81,18 @@ class UserDashboardController {
   }
 
   renderHeader() {
-    const user = this.user;
+    const user = this.user || this.getFallbackUser();
     const nameEl = document.getElementById('user-header-name');
     const phoneEl = document.getElementById('user-header-phone');
     const refByEl = document.getElementById('user-header-refby');
 
-    if (nameEl) nameEl.textContent = user.name || user.username;
-    if (phoneEl) phoneEl.textContent = user.phone || '0327272727';
-    if (refByEl) refByEl.textContent = user.referredBy || 'N/A';
+    if (nameEl) nameEl.textContent = user.name || user.username || '0327272727';
+    if (phoneEl) phoneEl.textContent = user.phone || user.username || '0327272727';
+    if (refByEl) refByEl.textContent = user.referredBy || 'Imperial Founder';
   }
 
   renderMainBalance() {
-    const user = this.user;
+    const user = this.user || this.getFallbackUser();
     const eggCountEl = document.getElementById('main-available-eggs');
     const cashValueEl = document.getElementById('main-egg-cash-value');
     const walletBalanceEl = document.getElementById('main-wallet-balance');
@@ -66,14 +102,14 @@ class UserDashboardController {
     const totalSalesAmountEl = document.getElementById('stat-total-sales-amount');
 
     const availableEggs = Number(user.availableEggs || 0);
-    const avgEggRate = 45; // Rs. 45 average market rate
+    const avgEggRate = 45;
     const estimatedValue = Math.round(availableEggs * avgEggRate);
 
     if (eggCountEl) eggCountEl.textContent = availableEggs.toFixed(2);
     if (cashValueEl) cashValueEl.textContent = `≈ Rs. ${estimatedValue.toLocaleString()} Value`;
-    if (walletBalanceEl) walletBalanceEl.textContent = `Rs. ${(user.balance || 0).toLocaleString()}`;
+    if (walletBalanceEl) walletBalanceEl.textContent = `Rs. ${(Number(user.balance) || 0).toLocaleString()}`;
 
-    if (totalBoughtHensEl) totalBoughtHensEl.textContent = `${user.purchasedHens || 0} HENS`;
+    if (totalBoughtHensEl) totalBoughtHensEl.textContent = `${user.purchasedHens || user.totalHens || 0} HENS`;
     if (totalBoughtAmountEl) totalBoughtAmountEl.textContent = `Rs.${(user.totalPurchasesAmount || 0).toLocaleString()}`;
 
     if (totalSalesEggsEl) totalSalesEggsEl.textContent = `${user.totalEggsSold || 0} EGGS`;
@@ -84,8 +120,15 @@ class UserDashboardController {
     const container = document.getElementById('hen-packages-container');
     if (!container) return;
 
-    const packages = window.EHMStore.getHenPackages().filter((p) => p.status === 'active');
-    
+    const packages = (window.EHMStore && window.EHMStore.getHenPackages)
+      ? window.EHMStore.getHenPackages().filter((p) => p.status === 'active')
+      : [];
+
+    if (packages.length === 0) {
+      container.innerHTML = '<div style="padding:1rem; color:var(--text-muted);">No packages currently active.</div>';
+      return;
+    }
+
     container.innerHTML = packages
       .map(
         (pkg) => `
@@ -111,10 +154,13 @@ class UserDashboardController {
     const container = document.getElementById('market-buyers-container');
     if (!container) return;
 
-    const buyers = window.EHMStore.getMarketBuyers();
+    const buyers = (window.EHMStore && window.EHMStore.getMarketBuyers)
+      ? window.EHMStore.getMarketBuyers()
+      : [];
+
     container.innerHTML = buyers
       .map((b, idx) => `
-      <div class="buyer-row" onclick="window.EHMUser.openSellModal('${b.id}')" style="cursor:pointer;">
+      <div class="buyer-row" onclick="window.EHMUser.openSellModal('${b.id}')" style="cursor:pointer;" title="Click to trade eggs">
         <div class="buyer-identity">
           <div class="buyer-rank-badge">${idx + 1}</div>
           <div>
@@ -140,7 +186,7 @@ class UserDashboardController {
   }
 
   renderUserStats() {
-    const user = this.user;
+    const user = this.user || this.getFallbackUser();
 
     const statHens = document.getElementById('stat-overview-hens');
     const statSoldEggs = document.getElementById('stat-overview-sold');
@@ -158,7 +204,7 @@ class UserDashboardController {
   }
 
   renderReferralSection() {
-    const user = this.user;
+    const user = this.user || this.getFallbackUser();
     const refCode = user.referralCode || 'EHM882';
     const refUrl = `https://egghenmarket.com?refcode=${refCode}`;
 
@@ -167,13 +213,15 @@ class UserDashboardController {
     const eggsEl = document.getElementById('referral-eggs-label');
 
     if (input) input.value = refUrl;
-    if (countEl) countEl.textContent = `${user.referralsCount || 0} members joined using your link`;
-    if (eggsEl) eggsEl.textContent = `+${Number(user.referralEggs || 0).toFixed(1)} Referral Eggs Earned`;
+    if (countEl) countEl.innerHTML = `<i class="fa-solid fa-user-plus"></i> ${user.referralsCount || 0} members joined using this link`;
+    if (eggsEl) eggsEl.textContent = `+${Number(user.referralEggs || 0).toFixed(1)} Referral Eggs`;
   }
 
   renderTransactionsTable() {
     const container = document.getElementById('user-recent-tx-table');
     const fullContainer = document.getElementById('user-full-tx-table');
+
+    if (!window.EHMStore || !window.EHMStore.getTransactions) return;
 
     const allUserTxs = window.EHMStore.getTransactions({ userId: this.user.id });
     const txs = allUserTxs.slice(0, 5);
@@ -187,7 +235,7 @@ class UserDashboardController {
           </span>
         </td>
         <td style="font-size:0.82rem;">${tx.description}</td>
-        <td class="tabular-nums" style="font-weight:700; color: ${tx.amount > 0 && tx.type === 'Egg Sale' ? '#10B981' : tx.type === 'Hen Purchase' ? '#F59E0B' : '#FFF'};">
+        <td class="tabular-nums font-semibold" style="color: ${tx.amount > 0 && tx.type === 'Egg Sale' ? '#10B981' : tx.type === 'Hen Purchase' ? '#F59E0B' : '#FFF'};">
           ${tx.amount > 0 ? (tx.type === 'Hen Purchase' ? '- ' : '+ ') + window.EHMApp.formatCurrency(tx.amount) : tx.quantity}
         </td>
         <td style="font-size:0.75rem; color:var(--text-muted);">${tx.date}</td>
@@ -228,10 +276,15 @@ class UserDashboardController {
     const badge = document.getElementById('notification-badge-count');
     if (!container) return;
 
-    const notifs = window.EHMStore.data.notifications || [];
+    const notifs = (window.EHMStore && window.EHMStore.data) ? (window.EHMStore.data.notifications || []) : [];
     if (badge) {
       badge.textContent = notifs.length;
       badge.style.display = notifs.length > 0 ? 'inline-flex' : 'none';
+    }
+
+    if (notifs.length === 0) {
+      container.innerHTML = '<div style="padding:1.5rem; text-align:center; color:var(--text-muted);">No new notifications.</div>';
+      return;
     }
 
     container.innerHTML = notifs.map(n => `
@@ -289,10 +342,11 @@ class UserDashboardController {
   }
 
   async collectDailyEggs() {
+    if (!window.EHMStore || !window.EHMStore.harvestDailyEggs) return;
     const res = await window.EHMStore.harvestDailyEggs();
     if (res.success) {
       window.EHMApp.showToast(res.message, 'success');
-      this.remainingSeconds = 60; // reset for continuous live demo!
+      this.remainingSeconds = 60;
       this.renderAll();
     } else {
       window.EHMApp.showToast(res.message, 'error');
@@ -301,6 +355,7 @@ class UserDashboardController {
 
   // Buy Hen Package Flow
   openBuyModal(pkgId) {
+    if (!window.EHMStore) return;
     const pkg = window.EHMStore.getHenPackageById(pkgId);
     if (!pkg) return;
 
@@ -308,13 +363,18 @@ class UserDashboardController {
     const modal = document.getElementById('modal-buy-hen');
     if (!modal) return;
 
-    document.getElementById('buy-modal-title').textContent = pkg.name;
-    document.getElementById('buy-modal-hens').textContent = `${pkg.hens} Heritage Layers`;
-    document.getElementById('buy-modal-yield').textContent = `${pkg.dailyYield} Eggs / Day expected`;
-    document.getElementById('buy-modal-price').textContent = `Rs. ${pkg.price.toLocaleString()}`;
-    document.getElementById('buy-modal-balance').textContent = `Rs. ${(this.user.balance || 0).toLocaleString()}`;
-    
+    const titleEl = document.getElementById('buy-modal-title');
+    const hensEl = document.getElementById('buy-modal-hens');
+    const yieldEl = document.getElementById('buy-modal-yield');
+    const priceEl = document.getElementById('buy-modal-price');
+    const balanceEl = document.getElementById('buy-modal-balance');
     const qtyInput = document.getElementById('buy-modal-quantity');
+
+    if (titleEl) titleEl.textContent = pkg.name;
+    if (hensEl) hensEl.textContent = `${pkg.hens} Heritage Layers`;
+    if (yieldEl) yieldEl.textContent = `${pkg.dailyYield} Eggs / Day expected`;
+    if (priceEl) priceEl.textContent = `Rs. ${pkg.price.toLocaleString()}`;
+    if (balanceEl) balanceEl.textContent = `Rs. ${(this.user.balance || 0).toLocaleString()}`;
     if (qtyInput) qtyInput.value = 1;
 
     this.updateBuyTotal();
@@ -332,7 +392,7 @@ class UserDashboardController {
   }
 
   async confirmHenPurchase() {
-    if (!this.selectedPackage) return;
+    if (!this.selectedPackage || !window.EHMStore) return;
     const qtyInput = document.getElementById('buy-modal-quantity');
     const qty = Math.max(1, parseInt(qtyInput ? qtyInput.value : 1) || 1);
 
@@ -348,12 +408,12 @@ class UserDashboardController {
 
   // Sell Eggs Flow
   openSellModal(buyerId = null) {
+    if (!window.EHMStore) return;
     const buyers = window.EHMStore.getMarketBuyers();
-    const buyer = buyerId ? buyers.find(b => b.id === buyerId) : buyers[0];
-    this.selectedBuyer = buyer;
+    if (!buyers || buyers.length === 0) return;
 
-    const modal = document.getElementById('modal-sell-eggs');
-    if (!modal) return;
+    const buyer = buyerId ? (buyers.find(b => b.id === buyerId) || buyers[0]) : buyers[0];
+    this.selectedBuyer = buyer;
 
     const selectEl = document.getElementById('sell-modal-buyer-select');
     if (selectEl) {
@@ -364,13 +424,16 @@ class UserDashboardController {
       `).join('');
     }
 
-    document.getElementById('sell-modal-available-eggs').textContent = Number(this.user.availableEggs || 0).toFixed(2);
-    document.getElementById('sell-modal-rate').textContent = `Rs. ${buyer.ratePerEgg} / egg`;
-
+    const availEggsEl = document.getElementById('sell-modal-available-eggs');
+    const rateEl = document.getElementById('sell-modal-rate');
     const qtyInput = document.getElementById('sell-modal-quantity');
+
+    if (availEggsEl) availEggsEl.textContent = Number(this.user.availableEggs || 0).toFixed(2);
+    if (rateEl) rateEl.textContent = `Rs. ${buyer.ratePerEgg} / egg`;
+
     if (qtyInput) {
-      qtyInput.value = Math.min(Math.floor(this.user.availableEggs || 0), buyer.minEggs || 10);
-      if (qtyInput.value < buyer.minEggs) qtyInput.value = buyer.minEggs;
+      const avail = Math.floor(Number(this.user.availableEggs) || 0);
+      qtyInput.value = Math.max(buyer.minEggs || 1, Math.min(avail, buyer.minEggs || 10));
     }
 
     this.updateSellTotal();
@@ -379,11 +442,15 @@ class UserDashboardController {
 
   updateSellTotal() {
     const selectEl = document.getElementById('sell-modal-buyer-select');
+    if (!window.EHMStore) return;
     const buyers = window.EHMStore.getMarketBuyers();
+    if (!buyers || buyers.length === 0) return;
+
     const buyerId = selectEl ? selectEl.value : buyers[0].id;
     this.selectedBuyer = buyers.find(b => b.id === buyerId) || buyers[0];
 
-    document.getElementById('sell-modal-rate').textContent = `Rs. ${this.selectedBuyer.ratePerEgg} / egg`;
+    const rateEl = document.getElementById('sell-modal-rate');
+    if (rateEl) rateEl.textContent = `Rs. ${this.selectedBuyer.ratePerEgg} / egg`;
 
     const qtyInput = document.getElementById('sell-modal-quantity');
     const qty = Number(qtyInput ? qtyInput.value : 0) || 0;
@@ -394,7 +461,7 @@ class UserDashboardController {
   }
 
   async confirmSellEggs() {
-    if (!this.selectedBuyer) return;
+    if (!this.selectedBuyer || !window.EHMStore) return;
     const qtyInput = document.getElementById('sell-modal-quantity');
     const qty = Number(qtyInput ? qtyInput.value : 0);
 
@@ -408,6 +475,7 @@ class UserDashboardController {
     }
   }
 
+  // Profile Save
   saveProfile() {
     const nameInput = document.getElementById('profile-name');
     const phoneInput = document.getElementById('profile-phone');
@@ -419,7 +487,9 @@ class UserDashboardController {
       email: emailInput ? emailInput.value.trim() : this.user.email
     };
 
-    window.EHMStore.updateCurrentUser(updates);
+    if (window.EHMStore && window.EHMStore.updateCurrentUser) {
+      window.EHMStore.updateCurrentUser(updates);
+    }
     window.EHMApp.showToast('Profile updated successfully!', 'success');
     window.EHMApp.closeModal('modal-profile');
     this.renderAll();
@@ -427,21 +497,23 @@ class UserDashboardController {
 
   // Quick Balance Top Up for Demo
   topUpDemoBalance(amount = 10000) {
-    window.EHMStore.addDemoFunds(amount);
+    if (window.EHMStore && window.EHMStore.addDemoFunds) {
+      window.EHMStore.addDemoFunds(amount);
+    }
     window.EHMApp.showToast(`Deposited Rs. ${amount.toLocaleString()} into your wallet!`, 'success');
     window.EHMApp.closeModal('modal-topup');
     this.renderAll();
   }
 
   // Deposit Flow
-  openDepositModal() {
-    this.selectedDepositMethod = 'JazzCash';
+  openDepositModal(method = 'JazzCash') {
+    this.selectedDepositMethod = method || 'JazzCash';
     const amountInput = document.getElementById('deposit-input-amount');
     if (amountInput) amountInput.value = '5000';
     const trxInput = document.getElementById('deposit-input-trx');
     if (trxInput) trxInput.value = '';
 
-    this.selectDepositMethod('JazzCash');
+    this.selectDepositMethod(this.selectedDepositMethod);
     window.EHMApp.openModal('modal-deposit');
   }
 
@@ -491,6 +563,7 @@ class UserDashboardController {
     }
 
     const method = this.selectedDepositMethod || 'JazzCash';
+    if (!window.EHMStore) return;
     const res = await window.EHMStore.depositFunds(amount, method, trxId);
     if (res.success) {
       window.EHMApp.closeModal('modal-deposit');
@@ -503,7 +576,8 @@ class UserDashboardController {
 
   // Withdrawal Flow
   openWithdrawModal() {
-    const user = this.user || window.EHMStore.getCurrentUser();
+    this.updateUserState();
+    const user = this.user || this.getFallbackUser();
     const balanceEl = document.getElementById('withdraw-modal-available-balance');
     if (balanceEl) balanceEl.textContent = `Rs. ${(user.balance || 0).toLocaleString()}`;
 
@@ -514,14 +588,14 @@ class UserDashboardController {
     if (numInput) numInput.value = user.phone || '0327272727';
 
     const amountInput = document.getElementById('withdraw-input-amount');
-    if (amountInput) amountInput.value = Math.min(5000, user.balance || 0);
+    if (amountInput) amountInput.value = Math.min(5000, Math.max(500, user.balance || 0));
 
     this.updateWithdrawSummary();
     window.EHMApp.openModal('modal-withdrawal');
   }
 
   setWithdrawMax() {
-    const user = this.user || window.EHMStore.getCurrentUser();
+    const user = this.user || this.getFallbackUser();
     const amountInput = document.getElementById('withdraw-input-amount');
     if (amountInput) amountInput.value = user.balance || 0;
     this.updateWithdrawSummary();
@@ -555,6 +629,7 @@ class UserDashboardController {
       return;
     }
 
+    if (!window.EHMStore) return;
     const res = await window.EHMStore.withdrawFunds(amount, method, title, accNum);
     if (res.success) {
       window.EHMApp.closeModal('modal-withdrawal');
@@ -567,7 +642,31 @@ class UserDashboardController {
 
   // Bind UI Events
   bindEvents() {
-    // Quantity change listeners
+    // Buttons by ID
+    const depBtn = document.getElementById('btn-deposit-action');
+    if (depBtn) depBtn.onclick = () => this.openDepositModal();
+
+    const wthBtn = document.getElementById('btn-withdraw-action');
+    if (wthBtn) wthBtn.onclick = () => this.openWithdrawModal();
+
+    const harvestBtn = document.getElementById('harvest-trigger-btn');
+    if (harvestBtn) harvestBtn.onclick = () => this.collectDailyEggs();
+
+    // Center egg bubble on bottom nav
+    const centerBubble = document.querySelector('.nav-center-bubble');
+    if (centerBubble) {
+      centerBubble.onclick = () => {
+        if (this.remainingSeconds <= 0) {
+          this.collectDailyEggs();
+        } else {
+          const card = document.querySelector('.main-balance-card');
+          if (card) card.scrollIntoView({ behavior: 'smooth' });
+          window.EHMApp.showToast(`Laying in progress: ${this.remainingSeconds}s remaining to harvest!`, 'gold');
+        }
+      };
+    }
+
+    // Modal calculation inputs
     const buyQty = document.getElementById('buy-modal-quantity');
     if (buyQty) buyQty.addEventListener('input', () => this.updateBuyTotal());
 
@@ -583,18 +682,18 @@ class UserDashboardController {
     // Copy Referral link
     const copyBtn = document.getElementById('btn-copy-ref-link');
     if (copyBtn) {
-      copyBtn.addEventListener('click', () => {
+      copyBtn.onclick = () => {
         const input = document.getElementById('referral-link-input');
         if (input) {
           window.EHMApp.copyText(input.value, 'Referral link copied to clipboard!');
         }
-      });
+      };
     }
 
     // Share button
     const shareBtn = document.getElementById('btn-share-ref-link');
     if (shareBtn) {
-      shareBtn.addEventListener('click', () => {
+      shareBtn.onclick = () => {
         const input = document.getElementById('referral-link-input');
         if (navigator.share && input) {
           navigator.share({
@@ -605,12 +704,10 @@ class UserDashboardController {
         } else if (input) {
           window.EHMApp.copyText(input.value, 'Share link copied to clipboard!');
         }
-      });
+      };
     }
   }
 }
 
-// Instantiate on load
-document.addEventListener('DOMContentLoaded', () => {
-  window.EHMUser = new UserDashboardController();
-});
+// Immediate instantiation to ensure all window.EHMUser calls work without timing delays
+window.EHMUser = new UserDashboardController();

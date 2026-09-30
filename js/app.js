@@ -89,6 +89,8 @@ window.EHMApp = {
     if (modal) {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+    } else {
+      console.warn(`[EHMApp] Modal #${modalId} not found in DOM.`);
     }
   },
 
@@ -127,27 +129,69 @@ window.EHMApp = {
   }
 };
 
-// Global click delegation for modal close & backdrop clicks
-document.addEventListener('DOMContentLoaded', () => {
+// Global click event delegation for ALL buttons and modal triggers
+function bindGlobalAppEvents() {
   document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal-overlay')) {
-      window.EHMApp.closeAllModals();
+    // 1. Modal trigger buttons with data-open-modal
+    const openBtn = e.target.closest('[data-open-modal]');
+    if (openBtn) {
+      const modalId = openBtn.getAttribute('data-open-modal');
+      if (modalId) {
+        e.preventDefault();
+        window.EHMApp.openModal(modalId);
+        return;
+      }
     }
+
+    // 2. Modal close buttons with data-close-modal
     const closeBtn = e.target.closest('[data-close-modal]');
     if (closeBtn) {
       const modalId = closeBtn.getAttribute('data-close-modal');
       if (modalId) {
+        e.preventDefault();
         window.EHMApp.closeModal(modalId);
       } else {
         window.EHMApp.closeAllModals();
       }
+      return;
+    }
+
+    // 3. Modal overlay background click
+    if (e.target.classList.contains('modal-overlay')) {
+      window.EHMApp.closeAllModals();
+      return;
+    }
+
+    // 4. Quick modal actions via data-action
+    const actionBtn = e.target.closest('[data-action]');
+    if (actionBtn && window.EHMUser) {
+      const action = actionBtn.getAttribute('data-action');
+      if (action === 'deposit') {
+        e.preventDefault();
+        window.EHMUser.openDepositModal();
+      } else if (action === 'withdraw') {
+        e.preventDefault();
+        window.EHMUser.openWithdrawModal();
+      } else if (action === 'harvest') {
+        e.preventDefault();
+        window.EHMUser.collectDailyEggs();
+      } else if (action === 'quick-sell') {
+        e.preventDefault();
+        window.EHMUser.openSellModal();
+      }
     }
   });
 
-  // ESC key closes modals
+  // ESC key closes all active modals
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       window.EHMApp.closeAllModals();
     }
   });
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bindGlobalAppEvents);
+} else {
+  bindGlobalAppEvents();
+}

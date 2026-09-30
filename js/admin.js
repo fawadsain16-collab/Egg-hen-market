@@ -7,6 +7,7 @@
 
 class AdminDashboardController {
   constructor() {
+    window.EHMAdmin = this;
     this.charts = {};
     this.selectedUserId = null;
     this.editingPackageId = null;
@@ -1285,6 +1286,14 @@ class AdminDashboardController {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  window.EHMAdmin = new AdminDashboardController();
-});
+function initAdminApp() {
+  if (!window.EHMAdmin) {
+    window.EHMAdmin = new AdminDashboardController();
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdminApp);
+} else {
+  initAdminApp();
+}

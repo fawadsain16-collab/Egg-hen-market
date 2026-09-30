@@ -958,9 +958,9 @@ app.get('/api/users/:id', (req: Request, res: Response) => {
   });
 });
 
-app.patch('/api/users/:id', (req: Request, res: Response) => {
+const handleUpdateUser = (req: Request, res: Response) => {
   const data = db.get();
-  const idx = data.users.findIndex((u: any) => u.id === req.params.id);
+  const idx = data.users.findIndex((u: any) => u.id === req.params.id || u.username === req.params.id);
   if (idx === -1) return res.status(404).json({ success: false, message: 'User not found' });
 
   const updates = req.body;
@@ -968,7 +968,10 @@ app.patch('/api/users/:id', (req: Request, res: Response) => {
   db.save();
 
   res.json({ success: true, user: data.users[idx] });
-});
+};
+
+app.patch('/api/users/:id', handleUpdateUser);
+app.put('/api/users/:id', handleUpdateUser);
 
 app.post('/api/users', (req: Request, res: Response) => {
   const data = db.get();
@@ -1780,7 +1783,7 @@ app.post('/api/packages', (req: Request, res: Response) => {
   res.json({ success: true, package: newPkg });
 });
 
-app.put('/api/packages/:id', (req: Request, res: Response) => {
+const handleUpdatePackage = (req: Request, res: Response) => {
   const data = db.get();
   const idx = data.henPackages.findIndex((p: any) => p.id === req.params.id);
   if (idx === -1) return res.status(404).json({ success: false, message: 'Package not found' });
@@ -1789,7 +1792,10 @@ app.put('/api/packages/:id', (req: Request, res: Response) => {
   db.save();
 
   res.json({ success: true, package: data.henPackages[idx] });
-});
+};
+
+app.put('/api/packages/:id', handleUpdatePackage);
+app.post('/api/packages/:id', handleUpdatePackage);
 
 app.delete('/api/packages/:id', (req: Request, res: Response) => {
   const data = db.get();
@@ -1804,7 +1810,7 @@ app.get('/api/buyers', (req: Request, res: Response) => {
   res.json({ success: true, buyers: db.get().marketBuyers });
 });
 
-app.put('/api/buyers/:id', (req: Request, res: Response) => {
+const handleUpdateBuyer = (req: Request, res: Response) => {
   const data = db.get();
   const idx = data.marketBuyers.findIndex((b: any) => b.id === req.params.id);
   if (idx === -1) return res.status(404).json({ success: false, message: 'Buyer not found' });
@@ -1813,7 +1819,10 @@ app.put('/api/buyers/:id', (req: Request, res: Response) => {
   db.save();
 
   res.json({ success: true, buyer: data.marketBuyers[idx] });
-});
+};
+
+app.put('/api/buyers/:id', handleUpdateBuyer);
+app.post('/api/buyers/:id', handleUpdateBuyer);
 
 // 11. Transactions & Ledger
 app.get('/api/transactions', (req: Request, res: Response) => {
@@ -1886,6 +1895,38 @@ app.post('/api/reset', (req: Request, res: Response) => {
 
 // ----------------- VITE & STATIC INTEGRATION -----------------
 async function startServer() {
+  const distPath = fs.existsSync(path.resolve(PROJECT_ROOT, 'dist'))
+    ? path.resolve(PROJECT_ROOT, 'dist')
+    : __dirname;
+
+  // Clean dynamic routes for /admin, /user, /login
+  app.get('/admin', (req: Request, res: Response, next) => {
+    if (process.env.NODE_ENV !== 'production') {
+      req.url = '/admin.html';
+      next();
+    } else {
+      res.sendFile(path.resolve(distPath, 'admin.html'));
+    }
+  });
+
+  app.get('/user', (req: Request, res: Response, next) => {
+    if (process.env.NODE_ENV !== 'production') {
+      req.url = '/user.html';
+      next();
+    } else {
+      res.sendFile(path.resolve(distPath, 'user.html'));
+    }
+  });
+
+  app.get('/login', (req: Request, res: Response, next) => {
+    if (process.env.NODE_ENV !== 'production') {
+      req.url = '/login.html';
+      next();
+    } else {
+      res.sendFile(path.resolve(distPath, 'login.html'));
+    }
+  });
+
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -1893,11 +1934,8 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = fs.existsSync(path.resolve(PROJECT_ROOT, 'dist'))
-      ? path.resolve(PROJECT_ROOT, 'dist')
-      : __dirname;
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
+    app.get('*', (req: Request, res: Response) => {
       res.sendFile(path.resolve(distPath, 'index.html'));
     });
   }
