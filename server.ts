@@ -17,13 +17,58 @@ const PROJECT_ROOT = fs.existsSync(path.resolve(__dirname, 'package.json'))
 
 const DB_FILE = path.resolve(PROJECT_ROOT, 'data', 'database.json');
 
-app.use(express.json());
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
 
 // Ensure data directory exists
 const dataDir = path.resolve(PROJECT_ROOT, 'data');
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
+
+// Default Payment Gateways (EasyPaisa, JazzCash, Meezan Bank)
+const DEFAULT_PAYMENT_METHODS = [
+  {
+    id: 'pm-easypaisa',
+    name: 'EasyPaisa',
+    type: 'mobile_wallet',
+    accountTitle: 'Egg Hen Market Official',
+    accountNumber: '0327272727',
+    instructions: 'Send exact payment via EasyPaisa App or *786#. Copy 11-digit Trx ID & upload screenshot.',
+    status: 'active',
+    icon: 'fa-wallet',
+    color: '#10B981',
+    minAmount: 200,
+    maxAmount: 500000
+  },
+  {
+    id: 'pm-jazzcash',
+    name: 'JazzCash',
+    type: 'mobile_wallet',
+    accountTitle: 'Muhammad Sultan (Egg Hen Admin)',
+    accountNumber: '03008472910',
+    instructions: 'Send exact payment via JazzCash App or *786#. Copy TID & upload receipt screenshot.',
+    status: 'active',
+    icon: 'fa-mobile-screen-button',
+    color: '#D4AF37',
+    minAmount: 200,
+    maxAmount: 500000
+  },
+  {
+    id: 'pm-meezan-bank',
+    name: 'Meezan Bank',
+    type: 'bank',
+    accountTitle: 'Egg Hen Market Agro PVT LTD',
+    accountNumber: '0102030405060708',
+    iban: 'PK45MEZN0001020304050607',
+    instructions: 'Transfer via Raast ID / 1Link or any Mobile Banking App. Enter TID and attach screenshot.',
+    status: 'active',
+    icon: 'fa-building-columns',
+    color: '#0284C7',
+    minAmount: 1000,
+    maxAmount: 2000000
+  }
+];
 
 // Default Seed Data
 const DEFAULT_HEN_PACKAGES = [
@@ -704,6 +749,7 @@ class Database {
         if (!this.data.transactions) this.data.transactions = DEFAULT_TRANSACTIONS;
         if (!this.data.notifications) this.data.notifications = DEFAULT_NOTIFICATIONS;
         if (!this.data.settings) this.data.settings = DEFAULT_SETTINGS;
+        if (!this.data.paymentMethods) this.data.paymentMethods = DEFAULT_PAYMENT_METHODS;
       } else {
         this.reset();
       }
@@ -735,7 +781,8 @@ class Database {
       marketBuyers: DEFAULT_MARKET_BUYERS,
       transactions: DEFAULT_TRANSACTIONS,
       notifications: DEFAULT_NOTIFICATIONS,
-      settings: DEFAULT_SETTINGS
+      settings: DEFAULT_SETTINGS,
+      paymentMethods: DEFAULT_PAYMENT_METHODS
     };
     this.save();
   }
@@ -864,7 +911,8 @@ app.get('/api/state', (req: Request, res: Response) => {
     stats: computeDynamicStats(),
     henPackages: data.henPackages,
     marketBuyers: data.marketBuyers,
-    settings: data.settings
+    settings: data.settings,
+    paymentMethods: data.paymentMethods || DEFAULT_PAYMENT_METHODS
   });
 });
 
@@ -1030,7 +1078,7 @@ app.get('/api/deposits', (req: Request, res: Response) => {
 });
 
 app.post('/api/deposits', (req: Request, res: Response) => {
-  const { userId, amount, method, trxId } = req.body;
+  const { userId, amount, method, trxId, proofImage, accountTitle, accountNumber, notes } = req.body;
   const numAmount = Number(amount);
 
   if (!numAmount || numAmount <= 0) {
@@ -1061,6 +1109,10 @@ app.post('/api/deposits', (req: Request, res: Response) => {
     amount: numAmount,
     method: method || 'JazzCash',
     trxId: trxId ? trxId.trim() : `TX-${Math.floor(100000 + Math.random() * 900000)}`,
+    accountTitle: accountTitle || null,
+    accountNumber: accountNumber || null,
+    proofImage: proofImage || null,
+    notes: notes || null,
     status: 'pending',
     createdAt: dateStr,
     processedAt: null,
@@ -1075,19 +1127,20 @@ app.post('/api/deposits', (req: Request, res: Response) => {
     userId: user.id,
     username: user.username,
     type: 'Deposit',
-    description: `Deposit request via ${depositRecord.method} (Ref: ${depositRecord.trxId})`,
+    description: `Manual Deposit via ${depositRecord.method} (Ref: ${depositRecord.trxId})`,
     amount: numAmount,
     quantity: `Rs. ${numAmount.toLocaleString()}`,
     rate: depositRecord.method,
     date: dateStr,
-    status: 'Pending'
+    status: 'Pending',
+    proofImage: proofImage || null
   });
 
   db.save();
 
   res.json({
     success: true,
-    message: `Deposit request for Rs. ${numAmount.toLocaleString()} submitted! Verification pending by Admin.`,
+    message: `Deposit request of Rs. ${numAmount.toLocaleString()} submitted! Verification pending by Admin.`,
     deposit: depositRecord
   });
 });
@@ -1565,11 +1618,70 @@ app.get('/api/purchases', (req: Request, res: Response) => {
 });
 
 app.post('/api/purchases', (req: Request, res: Response) => {
-  const { userId, packageId, quantityMultiplier = 1 } = req.body;
+  const { userId, packageId, quantityMultiplier = 1, paymentType = 'wallet', method, trxId, proofImage, hensCount, amount, packageName } = req.body;
   const data = db.get();
   const user = data.users.find((u: any) => u.id === userId || u.username === userId);
   if (!user) return res.status(404).json({ success: false, message: 'User not found.' });
 
+  const purId = `PUR-${Math.floor(1000 + Math.random() * 9000)}`;
+  const dateStr = new Date().toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  // Manual Payment Flow (EasyPaisa / JazzCash / Bank)
+  if (paymentType === 'manual') {
+    const pkg = packageId ? data.henPackages.find((p: any) => p.id === packageId) : null;
+    const totalHens = Number(hensCount) || (pkg ? pkg.hens * quantityMultiplier : 10);
+    const totalPrice = Number(amount) || (pkg ? pkg.price * quantityMultiplier : totalHens * 580);
+    const name = packageName || (pkg ? pkg.name : `${totalHens} Hens Commercial Flock`);
+
+    const purchaseRecord = {
+      id: purId,
+      userId: user.id,
+      username: user.username,
+      packageId: packageId || 'custom-flock',
+      packageName: name,
+      hensCount: totalHens,
+      amount: totalPrice,
+      dailyYield: totalHens * 1.05,
+      paymentType: 'manual',
+      method: method || 'EasyPaisa',
+      trxId: trxId ? trxId.trim() : `TX-${Date.now().toString().slice(-6)}`,
+      proofImage: proofImage || null,
+      status: 'pending',
+      createdAt: dateStr
+    };
+
+    data.purchases.unshift(purchaseRecord);
+
+    data.transactions.unshift({
+      id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
+      userId: user.id,
+      username: user.username,
+      type: 'Hen Purchase',
+      description: `Manual Purchase of ${totalHens} Hens via ${method || 'EasyPaisa'} (Ref: ${purchaseRecord.trxId})`,
+      amount: totalPrice,
+      quantity: `${totalHens} Hens`,
+      rate: `Rs. 580 per unit`,
+      date: dateStr,
+      status: 'Pending',
+      proofImage: proofImage || null
+    });
+
+    db.save();
+
+    return res.json({
+      success: true,
+      message: `Manual purchase order for ${totalHens} Hens submitted! Verification pending by Admin.`,
+      purchase: purchaseRecord
+    });
+  }
+
+  // Wallet deduction flow
   const pkg = data.henPackages.find((p: any) => p.id === packageId);
   if (!pkg) return res.status(404).json({ success: false, message: 'Package not found.' });
 
@@ -1589,15 +1701,6 @@ app.post('/api/purchases', (req: Request, res: Response) => {
   user.purchasedHens = (Number(user.purchasedHens) || 0) + totalHens;
   user.totalPurchasesAmount = (Number(user.totalPurchasesAmount) || 0) + totalPrice;
 
-  const purId = `PUR-${Math.floor(1000 + Math.random() * 9000)}`;
-  const dateStr = new Date().toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
   const purchaseRecord = {
     id: purId,
     userId: user.id,
@@ -1607,6 +1710,7 @@ app.post('/api/purchases', (req: Request, res: Response) => {
     hensCount: totalHens,
     amount: totalPrice,
     dailyYield: pkg.dailyYield * quantityMultiplier,
+    paymentType: 'wallet',
     status: 'approved',
     createdAt: dateStr
   };
@@ -1682,10 +1786,37 @@ app.post('/api/purchases/:id/approve', (req: Request, res: Response) => {
   const pur = data.purchases.find((p: any) => p.id === req.params.id);
   if (!pur) return res.status(404).json({ success: false, message: 'Purchase not found.' });
 
+  if (pur.status === 'approved') {
+    return res.status(400).json({ success: false, message: 'Purchase is already approved.' });
+  }
+
+  const user = data.users.find((u: any) => u.id === pur.userId);
+  if (user && pur.status === 'pending') {
+    user.totalHens = (Number(user.totalHens) || 0) + pur.hensCount;
+    user.purchasedHens = (Number(user.purchasedHens) || 0) + pur.hensCount;
+    user.totalPurchasesAmount = (Number(user.totalPurchasesAmount) || 0) + pur.amount;
+
+    data.notifications.unshift({
+      id: `NOTIF-${Date.now()}`,
+      title: 'Flock Order Approved',
+      message: `Your payment of Rs. ${pur.amount.toLocaleString()} was approved! +${pur.hensCount} Laying Hens are now active.`,
+      date: 'Just now',
+      type: 'purchase',
+      read: false
+    });
+  }
+
   pur.status = 'approved';
+  pur.processedAt = new Date().toLocaleString();
+
+  const tx = data.transactions.find(
+    (t: any) => t.userId === pur.userId && t.type === 'Hen Purchase' && t.description.includes(pur.trxId || pur.id)
+  );
+  if (tx) tx.status = 'Completed';
+
   db.save();
 
-  res.json({ success: true, message: `Purchase ${pur.id} marked as approved.`, purchase: pur });
+  res.json({ success: true, message: `Purchase ${pur.id} approved and ${pur.hensCount} hens credited!`, purchase: pur });
 });
 
 app.post('/api/purchases/:id/reject', (req: Request, res: Response) => {
@@ -1887,7 +2018,59 @@ app.put('/api/settings', (req: Request, res: Response) => {
   res.json({ success: true, settings: data.settings });
 });
 
-// 14. Factory Reset Endpoint
+// 14. Payment Methods Management (Manual Gateways)
+app.get('/api/payment-methods', (req: Request, res: Response) => {
+  const methods = db.get().paymentMethods || DEFAULT_PAYMENT_METHODS;
+  res.json({ success: true, paymentMethods: methods });
+});
+
+app.post('/api/payment-methods', (req: Request, res: Response) => {
+  const data = db.get();
+  if (!data.paymentMethods) data.paymentMethods = [...DEFAULT_PAYMENT_METHODS];
+  const { name, type, accountTitle, accountNumber, iban, instructions, color, icon, minAmount, maxAmount } = req.body;
+  
+  const newMethod = {
+    id: `pm-${Date.now()}`,
+    name: name || 'Payment Method',
+    type: type || 'mobile_wallet',
+    accountTitle: accountTitle || 'Egg Hen Official',
+    accountNumber: accountNumber || '',
+    iban: iban || '',
+    instructions: instructions || 'Send payment and upload screenshot proof.',
+    status: 'active',
+    icon: icon || 'fa-wallet',
+    color: color || '#10B981',
+    minAmount: Number(minAmount) || 200,
+    maxAmount: Number(maxAmount) || 500000
+  };
+
+  data.paymentMethods.push(newMethod);
+  db.save();
+  res.json({ success: true, paymentMethod: newMethod });
+});
+
+const handleUpdatePaymentMethod = (req: Request, res: Response) => {
+  const data = db.get();
+  if (!data.paymentMethods) data.paymentMethods = [...DEFAULT_PAYMENT_METHODS];
+  const idx = data.paymentMethods.findIndex((m: any) => m.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ success: false, message: 'Payment method not found' });
+  
+  data.paymentMethods[idx] = { ...data.paymentMethods[idx], ...req.body };
+  db.save();
+  res.json({ success: true, paymentMethod: data.paymentMethods[idx] });
+};
+app.put('/api/payment-methods/:id', handleUpdatePaymentMethod);
+app.post('/api/payment-methods/:id', handleUpdatePaymentMethod);
+
+app.delete('/api/payment-methods/:id', (req: Request, res: Response) => {
+  const data = db.get();
+  if (!data.paymentMethods) data.paymentMethods = [...DEFAULT_PAYMENT_METHODS];
+  data.paymentMethods = data.paymentMethods.filter((m: any) => m.id !== req.params.id);
+  db.save();
+  res.json({ success: true, message: 'Payment method deleted.' });
+});
+
+// 15. Factory Reset Endpoint
 app.post('/api/reset', (req: Request, res: Response) => {
   db.reset();
   res.json({ success: true, message: 'Factory seed data restored.' });

@@ -1,962 +1,890 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Egg Hen Market - Luxury Poultry & Egg Trading Platform</title>
-    <meta name="description" content="Premium fintech poultry marketplace and egg trading platform with real-time analytics, hen package management, egg harvesting, referral commissions, and administrative control." />
-    <meta property="og:title" content="Egg Hen Market - Luxury Poultry & Egg Trading Platform" />
-    <meta property="og:description" content="Premium fintech poultry marketplace and egg trading platform with real-time analytics, hen package management, egg harvesting, referral commissions, and administrative control." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Egg Hen Market - Luxury Poultry & Egg Trading Platform</title>
+  <meta name="description" content="Pakistan's certified poultry investment and wholesale egg trading platform. Buy laying hens, harvest fresh eggs daily, and earn real-time payouts via JazzCash, EasyPaisa, and Bank." />
+  <meta property="og:title" content="Egg Hen Market - Luxury Poultry & Egg Trading Platform" />
+  <meta property="og:description" content="Pakistan's certified poultry investment and wholesale egg trading platform. Buy laying hens, harvest fresh eggs daily, and earn real-time payouts." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .landing-hero {
+      position: relative;
+      padding: 3rem 1.25rem 4rem;
+      background: radial-gradient(circle at 50% 20%, rgba(6,46,37,0.85) 0%, #061114 70%);
+      border-bottom: 1px solid var(--border-gold);
+      overflow: hidden;
+    }
+    .landing-hero-glow {
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(212,175,55,0.18) 0%, transparent 70%);
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .landing-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .landing-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+    .auth-tab-btn.active {
+      color: var(--gold-light);
+      border-bottom: 2px solid var(--gold-primary);
+      background: rgba(212,175,55,0.06);
+    }
+    .plan-card-luxury {
+      background: linear-gradient(180deg, rgba(12,20,23,0.92) 0%, rgba(6,46,37,0.45) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .plan-card-luxury:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-light);
+      box-shadow: 0 15px 35px rgba(212,175,55,0.2);
+    }
+    .payment-box-card {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
 
-    <!-- LUXURY PORTAL TOP SWITCHER BAR -->
-    <div style="background:linear-gradient(90deg, #062E25 0%, #081417 50%, #062E25 100%); border-bottom:1px solid var(--border-gold); padding:0.45rem 1rem; font-size:0.78rem;">
-      <div style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
-        <div style="display:flex; align-items:center; gap:0.5rem; color:var(--gold-light);">
-          <i class="fa-solid fa-crown" style="color:var(--gold-primary);"></i>
-          <span style="font-weight:600;">EGG HEN MARKET</span>
-          <span style="color:var(--text-muted);">· Luxury Poultry & Egg Trading Exchange</span>
+  <!-- Top Navigation Header -->
+  <header class="app-header" style="position:sticky; top:0; z-index:100; backdrop-filter:blur(16px); background:rgba(6,17,20,0.92); border-bottom:1px solid var(--border-gold);">
+    <div class="app-header-inner" style="max-width:1200px; margin:0 auto; padding:0 1rem; display:flex; justify-content:space-between; align-items:center;">
+      <a href="index.html" class="brand-badge" style="text-decoration:none;">
+        <div class="brand-icon-wrap" style="background:var(--gold-gradient); width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#070B0E;">
+          <i class="fa-solid fa-egg" style="font-size:1.15rem;"></i>
         </div>
+        <div>
+          <span class="brand-name" style="font-weight:800; font-size:1.1rem; color:#FFF; letter-spacing:0.04em;">EGG HEN MARKET</span>
+          <span style="font-size:0.68rem; color:var(--text-gold); display:block; letter-spacing:0.05em; text-transform:uppercase;">Official Poultry Exchange</span>
+        </div>
+      </a>
 
-        <div style="display:flex; align-items:center; gap:0.6rem;">
-          <a href="user.html" class="btn-gold" style="padding:0.25rem 0.75rem; font-size:0.72rem; border-radius:8px;">
-            <i class="fa-solid fa-user"></i> User Website
-          </a>
-          <a href="admin.html" class="btn-outline-gold" style="padding:0.25rem 0.75rem; font-size:0.72rem; border-radius:8px;">
-            <i class="fa-solid fa-shield-halved"></i> Admin Console
-          </a>
-          <a href="login.html" class="btn-outline-gold" style="padding:0.25rem 0.75rem; font-size:0.72rem; border-radius:8px;">
-            <i class="fa-solid fa-key"></i> Login
-          </a>
-        </div>
+      <!-- Desktop Nav Links -->
+      <nav style="display:flex; align-items:center; gap:1.25rem;" class="hide-mobile">
+        <a href="#plans" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='var(--text-secondary)'">پلانز اور پیکجز</a>
+        <a href="#calculator" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='var(--text-secondary)'">منافع کیلکولیٹر</a>
+        <a href="#payment-methods-info" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='var(--text-secondary)'">پیمنٹ میتھڈز</a>
+        <a href="#fbr-trust" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; font-weight:600; transition:color 0.2s;" onmouseover="this.style.color='#D4AF37'" onmouseout="this.style.color='var(--text-secondary)'">FBR لائسنس</a>
+      </nav>
+
+      <!-- Auth Actions -->
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <button class="btn-outline-gold" style="padding:0.4rem 0.85rem; font-size:0.8rem; border-radius:8px;" onclick="scrollToAuth('login')">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> لاگ ان
+        </button>
+        <button class="btn-gold" style="padding:0.4rem 0.95rem; font-size:0.8rem; border-radius:8px;" onclick="scrollToAuth('register')">
+          <i class="fa-solid fa-user-plus"></i> رجسٹر کریں
+        </button>
+        <a href="user.html" class="btn-emerald" style="padding:0.4rem 0.85rem; font-size:0.8rem; border-radius:8px; text-decoration:none;" title="Open User Portal">
+          <i class="fa-solid fa-gauge-high"></i> ڈیش بورڈ
+        </a>
       </div>
     </div>
+  </header>
 
-    <!-- Top App Bar -->
-    <header class="app-header">
-      <div class="app-header-inner">
-        <div style="display:flex; align-items:center; gap:0.85rem;">
-          <button id="menu-toggle-btn" class="modal-close-btn" style="color:var(--gold-light);" onclick="window.EHMApp.openModal('modal-menu-drawer')" aria-label="Open Navigation Menu">
-            <i class="fa-solid fa-bars-staggered" style="font-size:1.25rem;"></i>
-          </button>
-          <a href="index.html" class="brand-badge">
-            <div class="brand-icon-wrap">
-              <i class="fa-solid fa-egg"></i>
-            </div>
-            <div>
-              <span class="brand-name">EGG HEN MARKET</span>
-            </div>
-          </a>
-        </div>
-
-        <div class="user-header-profile">
-          <button class="modal-close-btn" style="position:relative; color:var(--text-secondary);" onclick="window.EHMApp.openModal('modal-notifications')" aria-label="Notifications">
-            <i class="fa-regular fa-bell" style="font-size:1.15rem;"></i>
-            <span id="notification-badge-count" style="position:absolute; top:-4px; right:-4px; width:16px; height:16px; border-radius:50%; background:#EF4444; color:#FFF; font-size:0.65rem; font-weight:700; display:flex; align-items:center; justify-content:center;">3</span>
-          </button>
-          <div class="user-quick-tag" onclick="window.EHMApp.openModal('modal-profile')" style="cursor:pointer;" title="View Profile">
-            <div class="status-dot-active"></div>
-            <span id="user-header-phone" class="tabular-nums" style="font-weight:600; color:#FFF;">0327272727</span>
-          </div>
-          <a href="admin.html" class="btn-outline-gold" style="padding:0.35rem 0.65rem; font-size:0.75rem;" title="Switch to Admin Dashboard">
-            <i class="fa-solid fa-shield-halved"></i> Admin
-          </a>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="user-container">
+  <!-- HERO SECTION WITH QUICK AUTH CARD -->
+  <section class="landing-hero">
+    <div class="landing-hero-glow"></div>
+    <div class="landing-grid">
       
-      <!-- User Info Kicker Row -->
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding:0 0.5rem; font-size:0.8rem; color:var(--text-secondary);">
-        <div>
-          <span style="color:var(--text-muted);">USERNAME:</span>
-          <strong id="user-header-name" style="color:#FFF; margin-left:4px;">0327272727</strong>
-        </div>
-        <div style="display:flex; align-items:center; gap:0.4rem;">
-          <i class="fa-solid fa-circle-user" style="color:var(--gold-primary);"></i>
-          <span style="color:var(--text-muted);">REFERRED BY:</span>
-          <strong id="user-header-refby" style="color:var(--gold-light);">Imperial Founder</strong>
-        </div>
-      </div>
-
-      <!-- MAIN BALANCE HERO CARD -->
-      <section class="main-balance-card">
-        <div class="balance-backdrop-glow"></div>
-        
-        <div class="balance-top-row">
-          <div>
-            <div class="balance-title-label">
-              <i class="fa-solid fa-coins"></i> Available Egg Reserve
-            </div>
-            <div class="balance-huge-value tabular-nums" id="main-available-eggs">124.50</div>
-            <div class="balance-sub-value" id="main-egg-cash-value">≈ Rs. 5,602 Estimated Value</div>
-            <div style="margin-top:0.6rem; font-size:0.82rem; color:var(--text-emerald); display:flex; align-items:center; gap:0.4rem;">
-              <i class="fa-solid fa-wallet"></i> Cash Wallet: <strong id="main-wallet-balance" class="tabular-nums" style="color:#FFF;">Rs. 14,500</strong>
-            </div>
-          </div>
-
-          <img src="/src/assets/images/golden_egg_basket_1790364486608.jpg" alt="Golden Egg Basket" class="balance-egg-illustration" referrerpolicy="no-referrer" />
+      <!-- Left: Value Proposition & Urgency -->
+      <div>
+        <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(212,175,55,0.12); border:1px solid var(--border-gold); padding:0.35rem 0.85rem; border-radius:30px; font-size:0.75rem; color:var(--gold-light); font-weight:700; margin-bottom:1.25rem;">
+          <i class="fa-solid fa-shield-halved" style="color:var(--gold-primary);"></i>
+          FBR رجسٹرڈ • تصدیق شدہ آرگینک پولٹری مارکیٹ
         </div>
 
-        <!-- BALANCE ACTIONS: DEPOSIT & WITHDRAWAL -->
-        <div class="balance-actions-row">
-          <button class="btn-gold balance-action-btn" id="btn-deposit-action" onclick="window.EHMUser.openDepositModal()">
-            <i class="fa-solid fa-arrow-down-to-bracket"></i> Deposit
-          </button>
-          <button class="btn-emerald balance-action-btn" id="btn-withdraw-action" onclick="window.EHMUser.openWithdrawModal()">
-            <i class="fa-solid fa-arrow-up-from-bracket"></i> Withdrawal
-          </button>
-        </div>
+        <h1 style="font-size:2.4rem; font-weight:800; color:#FFF; line-height:1.25; margin-bottom:1rem;">
+          گھر بیٹھے مرغیوں کی فارمنگ اور <span style="background:var(--gold-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">روزانہ انڈوں سے منافع</span> کمائیں
+        </h1>
 
-
-        <!-- Live Laying & Harvest Box -->
-        <div class="harvest-cycle-card" style="margin-bottom:0; background:rgba(0,0,0,0.35);">
-          <div class="harvest-timer-cluster">
-            <div class="timer-circle" id="harvest-timer-circle">
-              <i class="fa-solid fa-egg"></i>
-            </div>
-            <div>
-              <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-emerald); font-weight:700; letter-spacing:0.05em;">
-                Next Egg Harvest
-              </div>
-              <div id="harvest-countdown-text" class="tabular-nums" style="font-size:1.35rem; font-weight:800; color:#FFF;">
-                00:45
-              </div>
-            </div>
-          </div>
-          <button id="harvest-trigger-btn" class="btn-outline-gold" onclick="window.EHMUser.collectDailyEggs()">
-            <i class="fa-solid fa-hourglass-half"></i> Laying in Progress...
-          </button>
-        </div>
-      </section>
-
-      <!-- BOUGHT & SOLD METRIC STATS -->
-      <section class="stats-summary-grid">
-        <div class="metric-pill-card accent-gold">
-          <div class="metric-pill-header">
-            <span>TOTAL BOUGHT</span>
-            <i class="fa-solid fa-feather-pointed" style="color:var(--gold-primary);"></i>
-          </div>
-          <div class="metric-pill-main tabular-nums" id="stat-total-bought-hens">16 HENS</div>
-          <div class="metric-pill-sub tabular-nums" id="stat-total-bought-amount">Rs.9,280</div>
-        </div>
-
-        <div class="metric-pill-card accent-emerald">
-          <div class="metric-pill-header">
-            <span>TOTAL SALES</span>
-            <i class="fa-solid fa-arrow-trend-up" style="color:var(--emerald-primary);"></i>
-          </div>
-          <div class="metric-pill-main tabular-nums" id="stat-total-sales-eggs">820 EGGS</div>
-          <div class="metric-pill-sub tabular-nums" id="stat-total-sales-amount">Rs.38,400</div>
-        </div>
-      </section>
-
-
-      <!-- BUY HENS SECTION -->
-      <section id="section-buy-hens" style="margin-bottom:2rem;">
-        <div class="section-headline">
-          <h3 class="section-title">
-            <i class="fa-solid fa-cart-flatbed"></i> BUY Hens Packages
-          </h3>
-          <span style="font-size:0.75rem; color:var(--gold-light);">Active Market Tiers</span>
-        </div>
-
-        <div class="packages-scroller" id="hen-packages-container">
-          <!-- Rendered via js/user.js -->
-        </div>
-      </section>
-
-      <!-- SELL EGGS MARKET SECTION -->
-      <section id="section-sell-eggs" style="margin-bottom:2rem;">
-        <div class="section-headline">
-          <h3 class="section-title">
-            <i class="fa-solid fa-hand-holding-dollar"></i> SELL Eggs (Wholesale & Traders)
-          </h3>
-          <button class="btn-emerald" style="padding:0.4rem 0.85rem; font-size:0.78rem;" onclick="window.EHMUser.openSellModal()">
-            <i class="fa-solid fa-plus"></i> Quick Sell
-          </button>
-        </div>
-
-        <div class="buyers-list-card" id="market-buyers-container">
-          <!-- Rendered via js/user.js -->
-        </div>
-      </section>
-
-      <!-- TRUST BADGES -->
-      <section class="trust-badges-bar">
-        <div class="trust-badge-item"><i class="fa-solid fa-shield-heart"></i> Healthy Birds</div>
-        <div class="trust-badge-item"><i class="fa-solid fa-egg"></i> Fresh Eggs</div>
-        <div class="trust-badge-item"><i class="fa-solid fa-badge-check"></i> Quality Assured</div>
-        <div class="trust-badge-item"><i class="fa-solid fa-wheat-awn"></i> Natural Feed</div>
-        <div class="trust-badge-item"><i class="fa-solid fa-truck-fast"></i> Timely Delivery</div>
-      </section>
-
-      <!-- REFERRAL LINK SECTION -->
-      <section class="referral-luxury-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="display:flex; align-items:center; gap:0.5rem; color:var(--gold-light); font-weight:700; font-size:0.95rem;">
-            <i class="fa-solid fa-share-nodes"></i> REFERRAL PROGRAM
-          </div>
-          <button id="btn-share-ref-link" class="btn-outline-gold" style="padding:0.35rem 0.75rem; font-size:0.75rem;">
-            <i class="fa-solid fa-share"></i> Share
-          </button>
-        </div>
-
-        <div class="referral-input-group">
-          <input type="text" id="referral-link-input" class="referral-input" readonly value="https://egghenmarket.com?refcode=EHM882" />
-          <button id="btn-copy-ref-link" class="btn-gold" style="padding:0.65rem 1.1rem; border-radius:12px;">
-            <i class="fa-regular fa-copy"></i> Copy
-          </button>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; font-size:0.78rem; color:var(--text-secondary);">
-          <span id="referral-count-label"><i class="fa-solid fa-user-plus"></i> 0 members joined using this link</span>
-          <span id="referral-eggs-label" style="color:var(--emerald-primary); font-weight:600;">+0.0 Referral Eggs</span>
-        </div>
-      </section>
-
-      <!-- BONUSES & CERTIFICATIONS ROW -->
-      <section style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0.85rem; margin-bottom:1.5rem;">
-        <div class="glass-panel" style="padding:1rem; cursor:pointer;" onclick="window.EHMApp.openModal('modal-bonus')">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:38px; height:38px; border-radius:10px; background:rgba(212,175,55,0.15); color:var(--gold-primary); display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-              <i class="fa-solid fa-trophy"></i>
-            </div>
-            <div>
-              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Network</div>
-              <div style="font-size:0.92rem; font-weight:700; color:#FFF;">Team Bonus</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-panel" style="padding:1rem; cursor:pointer;" onclick="window.EHMApp.openModal('modal-gifts')">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:38px; height:38px; border-radius:10px; background:rgba(139,92,246,0.15); color:#A78BFA; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-              <i class="fa-solid fa-gift"></i>
-            </div>
-            <div>
-              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Seasonal</div>
-              <div style="font-size:0.92rem; font-weight:700; color:#FFF;">Mega Gifts</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-panel" style="padding:1rem; cursor:pointer;" onclick="window.EHMApp.openModal('modal-fbr-certificate')">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:38px; height:38px; border-radius:10px; background:rgba(249,115,22,0.15); color:#FB923C; display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-              <i class="fa-solid fa-file-shield"></i>
-            </div>
-            <div>
-              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Government</div>
-              <div style="font-size:0.92rem; font-weight:700; color:#FFF;">FBR Certificate</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-panel" style="padding:1rem; cursor:pointer;" onclick="window.EHMApp.showToast('Official Android APK package will download shortly.', 'info')">
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <div style="width:38px; height:38px; border-radius:10px; background:rgba(16,185,129,0.15); color:var(--emerald-primary); display:flex; align-items:center; justify-content:center; font-size:1.1rem;">
-              <i class="fa-brands fa-google-play"></i>
-            </div>
-            <div>
-              <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Mobile App</div>
-              <div style="font-size:0.92rem; font-weight:700; color:#FFF;">Install App</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- WHATSAPP SUPPORT -->
-      <section class="support-card">
-        <div style="display:flex; align-items:center; gap:0.5rem; color:#25D366; font-weight:700; font-size:0.95rem;">
-          <i class="fa-brands fa-whatsapp"></i> WHATSAPP SUPPORT
-        </div>
-        <p style="font-size:0.78rem; color:var(--text-secondary); margin-top:0.25rem;">
-          Official direct channels for swift deposit verification, trading assistance, and disputes.
+        <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.65; margin-bottom:1.75rem; max-width:560px;">
+          Egg Hen Market پاکستان کا اولین ڈیجیٹل پولٹری ایکو سسٹم ہے۔ مرغیاں منتخب کریں، ایزی پیسہ یا جیز کیش کے ذریعے ادائیگی کریں، اور روزانہ خودکار طور پر انڈوں کی ییلڈ حاصل کر کے ہول سیل ریٹ پر کیش میں فروخت کریں۔
         </p>
 
-        <div class="support-channels-grid">
-          <a href="https://wa.me/923008472910" target="_blank" class="support-channel-btn">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>Owner</span>
+        <!-- Feature Points Row -->
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.75rem; margin-bottom:2rem;">
+          <div style="background:rgba(0,0,0,0.35); border:1px solid var(--border-subtle); padding:0.75rem; border-radius:10px; text-align:center;">
+            <div style="font-size:1.15rem; color:var(--emerald-primary); margin-bottom:0.2rem;"><i class="fa-solid fa-egg"></i></div>
+            <strong style="font-size:0.8rem; color:#FFF; display:block;">روزانہ انڈے</strong>
+            <span style="font-size:0.68rem; color:var(--text-muted);">100% لائیو ہارویسٹ</span>
+          </div>
+
+          <div style="background:rgba(0,0,0,0.35); border:1px solid var(--border-subtle); padding:0.75rem; border-radius:10px; text-align:center;">
+            <div style="font-size:1.15rem; color:var(--gold-primary); margin-bottom:0.2rem;"><i class="fa-solid fa-money-bill-transfer"></i></div>
+            <strong style="font-size:0.8rem; color:#FFF; display:block;">فوری ادائیگی</strong>
+            <span style="font-size:0.68rem; color:var(--text-muted);">EasyPaisa & JazzCash</span>
+          </div>
+
+          <div style="background:rgba(0,0,0,0.35); border:1px solid var(--border-subtle); padding:0.75rem; border-radius:10px; text-align:center;">
+            <div style="font-size:1.15rem; color:#60A5FA; margin-bottom:0.2rem;"><i class="fa-solid fa-stamp"></i></div>
+            <strong style="font-size:0.8rem; color:#FFF; display:block;">FBR ٹیکس تصدیق</strong>
+            <span style="font-size:0.68rem; color:var(--text-muted);">NTN: 8294710-3</span>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <a href="#plans" class="btn-gold" style="padding:0.75rem 1.4rem; font-size:0.9rem; text-decoration:none; border-radius:12px; font-weight:700;">
+            <i class="fa-solid fa-basket-shopping"></i> مرغیوں کے پیکجز دیکھیں
           </a>
-          <a href="https://wa.me/92327272727" target="_blank" class="support-channel-btn">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>Admin 1</span>
-          </a>
-          <a href="https://whatsapp.com/channel/egghenmarket" target="_blank" class="support-channel-btn">
-            <i class="fa-solid fa-bullhorn"></i>
-            <span>Channel</span>
-          </a>
+          <button class="btn-outline-gold" style="padding:0.75rem 1.4rem; font-size:0.9rem; border-radius:12px; font-weight:700;" onclick="window.EHMUser.openManualPaymentModal(10, '10 Hens Commercial Coop')">
+            <i class="fa-solid fa-credit-card"></i> مینول پیمنٹ سے خریدیں
+          </button>
         </div>
-      </section>
+      </div>
 
-      <!-- QUICK ACCESS 6-GRID -->
-      <section style="margin-bottom:2rem;">
-        <div class="section-headline">
-          <h3 class="section-title">
-            <i class="fa-solid fa-compass"></i> Quick Access
-          </h3>
-        </div>
-
-        <div class="quick-access-grid">
-          <div class="quick-btn" onclick="window.EHMUser.openDepositModal()">
-            <div class="quick-icon-circle gold"><i class="fa-solid fa-arrow-down-to-bracket"></i></div>
-            <span class="quick-label">Deposit</span>
-          </div>
-          <div class="quick-btn" onclick="window.EHMUser.openWithdrawModal()">
-            <div class="quick-icon-circle emerald"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
-            <span class="quick-label">Withdrawal</span>
-          </div>
-          <div class="quick-btn" onclick="window.EHMApp.openModal('modal-transactions')">
-            <div class="quick-icon-circle gold"><i class="fa-solid fa-clock-rotate-left"></i></div>
-            <span class="quick-label">Transactions</span>
-          </div>
-          <div class="quick-btn" onclick="document.getElementById('section-buy-hens').scrollIntoView({behavior:'smooth'})">
-            <div class="quick-icon-circle amber"><i class="fa-solid fa-basket-shopping"></i></div>
-            <span class="quick-label">Purchases</span>
-          </div>
-          <div class="quick-btn" onclick="document.getElementById('section-sell-eggs').scrollIntoView({behavior:'smooth'})">
-            <div class="quick-icon-circle emerald"><i class="fa-solid fa-sack-dollar"></i></div>
-            <span class="quick-label">Sellings</span>
-          </div>
-          <div class="quick-btn" onclick="window.EHMApp.openModal('modal-active-hens')">
-            <div class="quick-icon-circle gold"><i class="fa-solid fa-feather"></i></div>
-            <span class="quick-label">Active Hens</span>
-          </div>
-          <div class="quick-btn" onclick="document.querySelector('.referral-luxury-card').scrollIntoView({behavior:'smooth'})">
-            <div class="quick-icon-circle emerald"><i class="fa-solid fa-users"></i></div>
-            <span class="quick-label">Referrals</span>
-          </div>
-          <div class="quick-btn" onclick="window.EHMApp.openModal('modal-profile')">
-            <div class="quick-icon-circle amber"><i class="fa-solid fa-sliders"></i></div>
-            <span class="quick-label">Settings</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- STATS OVERVIEW SECTION -->
-      <section style="margin-bottom:2rem;">
-        <div class="section-headline">
-          <h3 class="section-title">
-            <i class="fa-solid fa-chart-pie"></i> Stats Overview
-          </h3>
-        </div>
-
-        <div class="stats-summary-grid">
-          <div class="metric-pill-card">
-            <div class="metric-pill-header">
-              <span>PENDING BUY</span>
-              <i class="fa-solid fa-hourglass"></i>
-            </div>
-            <div class="metric-pill-main tabular-nums" id="stat-overview-pending-buy">0 Hens</div>
-            <div class="metric-pill-sub">Rs. 0.00</div>
-          </div>
-
-          <div class="metric-pill-card">
-            <div class="metric-pill-header">
-              <span>PENDING SELL</span>
-              <i class="fa-solid fa-hourglass-end"></i>
-            </div>
-            <div class="metric-pill-main tabular-nums" id="stat-overview-pending-sell">0 Eggs</div>
-            <div class="metric-pill-sub">Rs. 0.00</div>
-          </div>
-
-          <div class="metric-pill-card accent-gold">
-            <div class="metric-pill-header">
-              <span>EGGS EARNED</span>
-              <i class="fa-solid fa-egg" style="color:var(--gold-primary);"></i>
-            </div>
-            <div class="metric-pill-main tabular-nums" id="stat-overview-earned">890.00 Eggs</div>
-            <div class="metric-pill-sub">Lifetime Flock Yield</div>
-          </div>
-
-          <div class="metric-pill-card accent-emerald">
-            <div class="metric-pill-header">
-              <span>REFERRAL EGGS</span>
-              <i class="fa-solid fa-user-group" style="color:var(--emerald-primary);"></i>
-            </div>
-            <div class="metric-pill-main tabular-nums" id="stat-overview-ref-eggs">45.00 Eggs</div>
-            <div class="metric-pill-sub">Network Commission</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- RECENT TRANSACTIONS PREVIEW -->
-      <section style="margin-bottom:2rem;">
-        <div class="section-headline">
-          <h3 class="section-title">
-            <i class="fa-solid fa-receipt"></i> Recent Activity
-          </h3>
-          <button class="btn-outline-gold" style="padding:0.35rem 0.75rem; font-size:0.75rem;" onclick="window.EHMApp.openModal('modal-transactions')">
-            View All History
+      <!-- Right: Interactive Auth Form (Register / Login) -->
+      <div id="landing-auth-card" class="glass-panel" style="padding:0; border-radius:18px; border:1px solid var(--border-gold); box-shadow:0 20px 40px rgba(0,0,0,0.7); overflow:hidden;">
+        
+        <!-- Tab Headers -->
+        <div style="display:flex; border-bottom:1px solid var(--border-subtle); background:rgba(0,0,0,0.3);">
+          <button id="tab-btn-register" class="auth-tab-btn active" onclick="switchLandingAuthTab('register')">
+            <i class="fa-solid fa-user-plus"></i> نیا اکاؤنٹ بنائیں (Register)
+          </button>
+          <button id="tab-btn-login" class="auth-tab-btn" onclick="switchLandingAuthTab('login')">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> لاگ ان کریں (Sign In)
           </button>
         </div>
 
-        <div class="table-card">
-          <div class="table-responsive">
-            <table class="ehm-table">
-              <thead>
-                <tr>
-                  <th>Tx ID</th>
-                  <th>Type</th>
-                  <th>Details</th>
-                  <th>Amount</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-              <tbody id="user-recent-tx-table">
-                <!-- Rendered via js/user.js -->
-              </tbody>
-            </table>
+        <div style="padding:1.75rem;">
+          
+          <!-- REGISTER FORM -->
+          <form id="landing-register-form" onsubmit="handleLandingRegister(event)">
+            <h3 style="font-size:1.15rem; color:#FFF; font-weight:700; margin-bottom:0.25rem;">مفت اکاؤنٹ رجسٹر کریں</h3>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:1.25rem;">مرغیوں کی خریداری اور منافع کے لیے اپنی تفصیلات درج کریں۔</p>
+
+            <div style="margin-bottom:0.85rem;">
+              <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.3rem;">پورا نام (Full Name)</label>
+              <input type="text" id="reg-name" class="form-input" style="width:100%;" placeholder="e.g. محمد احمد" required />
+            </div>
+
+            <div style="margin-bottom:0.85rem;">
+              <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.3rem;">موبائل نمبر (EasyPaisa / JazzCash No)</label>
+              <input type="text" id="reg-phone" class="form-input tabular-nums" style="width:100%;" placeholder="0327272727" required />
+            </div>
+
+            <div style="margin-bottom:0.85rem;">
+              <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.3rem;">پاس ورڈ (Password)</label>
+              <input type="password" id="reg-password" class="form-input" style="width:100%;" placeholder="کم از کم 6 ہندسے" required />
+            </div>
+
+            <div style="margin-bottom:1.25rem;">
+              <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.3rem;">ریفرل کوڈ (اختیاری Referral Code)</label>
+              <input type="text" id="reg-referral" class="form-input" style="width:100%;" placeholder="e.g. EHM882" value="EHM882" />
+            </div>
+
+            <button type="submit" class="btn-gold" style="width:100%; padding:0.75rem; font-weight:700; font-size:0.95rem; border-radius:12px;">
+              <i class="fa-solid fa-circle-check"></i> اکاؤنٹ بنائیں اور شروع کریں
+            </button>
+
+            <div style="margin-top:1rem; font-size:0.72rem; color:var(--text-muted); text-align:center;">
+              اکاؤنٹ بنا کر آپ ہماری شرائط اور پرائیویسی پالیسی سے اتفاق کرتے ہیں۔
+            </div>
+          </form>
+
+          <!-- LOGIN FORM -->
+          <form id="landing-login-form" style="display:none;" onsubmit="handleLandingLogin(event)">
+            <h3 style="font-size:1.15rem; color:#FFF; font-weight:700; margin-bottom:0.25rem;">اپنے اکاؤنٹ میں لاگ ان کریں</h3>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:1.25rem;">اپنا رجسٹرڈ موبائل نمبر اور پاس ورڈ درج کریں۔</p>
+
+            <div style="margin-bottom:1rem;">
+              <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.3rem;">موبائل نمبر یا یوزرنیم</label>
+              <input type="text" id="login-input-user" class="form-input tabular-nums" style="width:100%;" placeholder="0327272727 یا demo" required />
+            </div>
+
+            <div style="margin-bottom:1.25rem;">
+              <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.3rem;">پاس ورڈ</label>
+              <input type="password" id="login-input-pass" class="form-input" style="width:100%;" placeholder="پاس ورڈ درج کریں" required />
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; font-size:0.75rem;">
+              <span style="color:var(--text-muted);">ڈیمو لاگ ان: <strong>demo / demo123</strong></span>
+              <a href="login.html" style="color:var(--gold-light); text-decoration:none;">ایڈمن لاگ ان</a>
+            </div>
+
+            <button type="submit" class="btn-gold" style="width:100%; padding:0.75rem; font-weight:700; font-size:0.95rem; border-radius:12px;">
+              <i class="fa-solid fa-arrow-right-to-bracket"></i> لاگ ان کریں
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LIVE METRICS BAR -->
+  <section style="background:#081417; border-bottom:1px solid var(--border-gold); padding:1rem;">
+    <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem; text-align:center;">
+      <div>
+        <div class="tabular-nums" style="font-size:1.35rem; font-weight:800; color:var(--gold-primary);">14,250+</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">فعال مرغیاں (Active Hens)</div>
+      </div>
+      <div>
+        <div class="tabular-nums" style="font-size:1.35rem; font-weight:800; color:var(--emerald-primary);">Rs. 1,840,000+</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">کل ادا شدہ منافع (Paid Out)</div>
+      </div>
+      <div>
+        <div class="tabular-nums" style="font-size:1.35rem; font-weight:800; color:#60A5FA;">100%</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">روزانہ خودکار انڈے (Yield)</div>
+      </div>
+      <div>
+        <div class="tabular-nums" style="font-size:1.35rem; font-weight:800; color:var(--gold-light);">FBR NTN</div>
+        <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">8294710-3 رجسٹرڈ</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN LANDING CONTENT -->
+  <main style="max-width:1200px; margin:0 auto; padding:3rem 1rem;">
+    
+    <!-- 1. PLANS & PACKAGES SECTION (پلانز وغیرہ شو ہو جائیں) -->
+    <section id="plans" style="margin-bottom:4rem;">
+      <div style="text-align:center; max-width:680px; margin:0 auto 2.5rem;">
+        <span style="color:var(--gold-light); font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em;">
+          مصدقہ پولٹری پیکجز (Investment Plans)
+        </span>
+        <h2 style="font-size:2rem; font-weight:800; color:#FFF; margin:0.35rem 0 0.75rem;">
+          مناسب پلان منتخب کریں اور فوری منافع شروع کریں
+        </h2>
+        <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">
+          ہر پیکج میں اعلیٰ کوالٹی لیئر مرغیاں شامل ہیں جن کی خوراک اور دیکھ بھال کمپنی کے فارمز میں خودکار کنٹرولڈ ماحول میں کی جاتی ہے۔
+        </p>
+      </div>
+
+      <!-- Packages Grid -->
+      <div id="landing-packages-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
+        <!-- Dynamically rendered or static fallback -->
+      </div>
+    </section>
+
+    <!-- 2. PROFIT CALCULATOR & HEN QUANTITY SELECTOR (کوانٹٹی ہو جیسے مرغیاں سلیکٹ کریں) -->
+    <section id="calculator" style="margin-bottom:4rem; background:linear-gradient(135deg, rgba(6,46,37,0.85) 0%, rgba(12,20,23,0.95) 100%); border:1px solid var(--border-gold); border-radius:20px; padding:2.5rem 1.75rem; box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+      <div style="text-align:center; max-width:600px; margin:0 auto 2rem;">
+        <span style="color:var(--gold-light); font-size:0.78rem; font-weight:700; text-transform:uppercase;">
+          انٹرایکٹو منافع کیلکولیٹر
+        </span>
+        <h3 style="font-size:1.75rem; font-weight:800; color:#FFF; margin:0.3rem 0;">
+          مرغیوں کی تعداد منتخب کریں اور منافع دیکھیں
+        </h3>
+        <p style="font-size:0.82rem; color:var(--text-secondary);">
+          1. کوانٹٹی منتخب کریں ➔ 2. نیچے پیمنٹ اور منافع شو ہو جائے گا ➔ 3. فوری خریدیں
+        </p>
+      </div>
+
+      <div style="max-width:700px; margin:0 auto;">
+        <!-- Quantity Stepper -->
+        <div style="background:rgba(0,0,0,0.4); border:1px solid var(--border-subtle); border-radius:14px; padding:1.25rem; margin-bottom:1.5rem;">
+          <label style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-gold); font-weight:700; margin-bottom:0.75rem; text-transform:uppercase;">
+            <span>مرغیوں کی تعداد (Hens Quantity)</span>
+            <span>Rs. 580 فی مرغی</span>
+          </label>
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <button class="btn-outline-gold" style="padding:0.6rem 1.25rem; font-size:1.15rem;" onclick="adjustCalcHens(-10)">-10</button>
+            <button class="btn-outline-gold" style="padding:0.6rem 1rem; font-size:1.15rem;" onclick="adjustCalcHens(-1)">-1</button>
+            <input type="number" id="calc-hens-qty" class="form-input tabular-nums" style="flex:1; text-align:center; font-size:1.6rem; font-weight:800; color:var(--gold-light);" value="25" min="1" max="1000" oninput="recalcLandingCalc()" />
+            <button class="btn-outline-gold" style="padding:0.6rem 1rem; font-size:1.15rem;" onclick="adjustCalcHens(1)">+1</button>
+            <button class="btn-outline-gold" style="padding:0.6rem 1.25rem; font-size:1.15rem;" onclick="adjustCalcHens(10)">+10</button>
+          </div>
+
+          <div class="amount-chips-grid" style="margin-top:0.85rem; grid-template-columns:repeat(5, 1fr);">
+            <div class="amount-chip" onclick="setCalcHens(5)">5 مرغیاں</div>
+            <div class="amount-chip" onclick="setCalcHens(10)">10 مرغیاں</div>
+            <div class="amount-chip" onclick="setCalcHens(25)">25 مرغیاں</div>
+            <div class="amount-chip" onclick="setCalcHens(50)">50 مرغیاں</div>
+            <div class="amount-chip" onclick="setCalcHens(100)">100 مرغیاں</div>
           </div>
         </div>
-      </section>
 
-    </main>
+        <!-- Dynamic Results Grid -->
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin-bottom:1.5rem;">
+          <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border-gold); padding:1rem; border-radius:12px; text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">کل رقم (Total Cost)</div>
+            <div id="calc-total-amount" class="tabular-nums" style="font-size:1.4rem; font-weight:800; color:var(--gold-primary); margin-top:0.25rem;">
+              Rs. 14,500
+            </div>
+          </div>
 
-    <!-- FIXED BOTTOM MOBILE NAVIGATION BAR -->
-    <nav class="mobile-bottom-nav">
-      <a href="#" class="nav-item-btn active" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <i class="fa-solid fa-house"></i>
-        <span>Home</span>
-      </a>
-      <button class="nav-item-btn" onclick="document.querySelector('.referral-luxury-card').scrollIntoView({behavior:'smooth'})">
-        <i class="fa-solid fa-users"></i>
-        <span>Network</span>
-      </button>
+          <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border-emerald); padding:1rem; border-radius:12px; text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">روزانہ انڈے (Daily Eggs)</div>
+            <div id="calc-daily-eggs" class="tabular-nums" style="font-size:1.4rem; font-weight:800; color:var(--emerald-primary); margin-top:0.25rem;">
+              26.2 Eggs
+            </div>
+          </div>
 
-      <!-- Elevated Center Egg Action Button -->
-      <div class="nav-center-action">
-        <button class="nav-center-bubble" onclick="window.EHMUser.collectDailyEggs()" title="Collect Daily Eggs">
-          <i class="fa-solid fa-egg"></i>
+          <div style="background:rgba(0,0,0,0.5); border:1px solid #3B82F6; padding:1rem; border-radius:12px; text-align:center;">
+            <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">ماہانہ متوقع آمدنی</div>
+            <div id="calc-monthly-cash" class="tabular-nums" style="font-size:1.4rem; font-weight:800; color:#60A5FA; margin-top:0.25rem;">
+              Rs. 35,400
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-gold" style="width:100%; padding:0.85rem; font-size:1.05rem; font-weight:800; border-radius:12px;" onclick="triggerManualBuyFromCalc()">
+          <i class="fa-solid fa-cart-shopping"></i> یہ مرغیاں ابھی خریدیں (Proceed to Buy)
         </button>
       </div>
+    </section>
 
-      <button class="nav-item-btn" onclick="window.EHMApp.openModal('modal-transactions')">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        <span>History</span>
-      </button>
-      <button class="nav-item-btn" onclick="window.EHMApp.openModal('modal-gifts')">
-        <i class="fa-solid fa-gift"></i>
-        <span>Rewards</span>
-      </button>
-    </nav>
-
-    <!-- Modals re-use definitions -->
-    <div class="modal-overlay" id="modal-buy-hen">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-cart-shopping" style="color:var(--gold-primary);"></i> Purchase Hen Package</h3>
-          <button class="modal-close-btn" data-close-modal="modal-buy-hen">&times;</button>
-        </div>
-        <div>
-          <h4 id="buy-modal-title" style="color:var(--gold-light); font-size:1.15rem; margin-bottom:0.25rem;">10 Hens Commercial Coop</h4>
-          <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1rem;" id="buy-modal-hens">10 Heritage Layers</div>
-
-          <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1rem; margin-bottom:1.25rem;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.4rem;">
-              <span style="color:var(--text-muted);">Package Price:</span>
-              <strong id="buy-modal-price" class="tabular-nums" style="color:#FFF;">Rs. 5,800</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.4rem;">
-              <span style="color:var(--text-muted);">Expected Daily Yield:</span>
-              <strong id="buy-modal-yield" style="color:var(--emerald-primary);">10.8 Eggs / day</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; padding-top:0.4rem; border-top:1px solid var(--border-subtle);">
-              <span style="color:var(--text-muted);">Available Cash Balance:</span>
-              <strong id="buy-modal-balance" class="tabular-nums" style="color:var(--gold-light);">Rs. 14,500</strong>
-            </div>
-          </div>
-
-          <div style="margin-bottom:1.25rem;">
-            <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem;">
-              Multiplier / Quantity of Packages
-            </label>
-            <input type="number" id="buy-modal-quantity" class="form-input" style="width:100%; text-align:center; font-size:1.1rem; font-weight:700;" min="1" max="20" value="1" />
-          </div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(212,175,55,0.08); border:1px solid var(--border-gold); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1.25rem;">
-            <span style="font-weight:600; color:#FFF;">Total Cost:</span>
-            <span id="buy-modal-total-calc" class="tabular-nums" style="font-size:1.25rem; font-weight:800; color:var(--gold-light);">Rs. 5,800</span>
-          </div>
-
-          <div style="display:flex; gap:0.75rem;">
-            <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-buy-hen">Cancel</button>
-            <button class="btn-gold" style="flex:2;" onclick="window.EHMUser.confirmHenPurchase()">
-              <i class="fa-solid fa-check"></i> Confirm Purchase
-            </button>
-          </div>
-        </div>
+    <!-- 3. OFFICIAL MANUAL PAYMENT GATEWAYS (ایزی پیسہ، جیز کیش نمبر پیمنٹ دیں) -->
+    <section id="payment-methods-info" style="margin-bottom:4rem;">
+      <div style="text-align:center; max-width:650px; margin:0 auto 2rem;">
+        <span style="color:var(--gold-light); font-size:0.8rem; font-weight:700; text-transform:uppercase;">
+          آفیشل ادائیگی کے ذرائع
+        </span>
+        <h2 style="font-size:2rem; font-weight:800; color:#FFF; margin:0.35rem 0;">
+          ایزی پیسہ، جیز کیش اور بینک اکاؤنٹس
+        </h2>
+        <p style="font-size:0.85rem; color:var(--text-secondary);">
+          رقم صرف کمپنی کے ان تصدیق شدہ آفیشل نمبرز پر بھیجیں اور رسید کا سکرین شاٹ اپ لوڈ کریں۔
+        </p>
       </div>
-    </div>
 
-    <!-- Sell Eggs Modal -->
-    <div class="modal-overlay" id="modal-sell-eggs">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-sack-dollar" style="color:var(--emerald-primary);"></i> Sell Fresh Eggs</h3>
-          <button class="modal-close-btn" data-close-modal="modal-sell-eggs">&times;</button>
-        </div>
-        <div>
-          <div style="margin-bottom:1rem;">
-            <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem;">
-              Select Market Trader / Buyer
-            </label>
-            <select id="sell-modal-buyer-select" class="form-input" style="width:100%; background:#0C1417; color:#FFF;">
-            </select>
-          </div>
-
-          <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1rem; margin-bottom:1.25rem;">
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.4rem;">
-              <span style="color:var(--text-muted);">Available Eggs:</span>
-              <strong id="sell-modal-available-eggs" class="tabular-nums" style="color:var(--text-gold);">124.50</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
-              <span style="color:var(--text-muted);">Buyer Rate:</span>
-              <strong id="sell-modal-rate" class="tabular-nums" style="color:var(--emerald-primary);">Rs. 55 / egg</strong>
-            </div>
-          </div>
-
-          <div style="margin-bottom:1.25rem;">
-            <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem;">
-              Egg Quantity to Sell
-            </label>
-            <input type="number" id="sell-modal-quantity" class="form-input" style="width:100%; text-align:center; font-size:1.1rem; font-weight:700;" min="1" value="50" />
-          </div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(16,185,129,0.08); border:1px solid var(--border-emerald); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1.25rem;">
-            <span style="font-weight:600; color:#FFF;">Estimated Cash Payout:</span>
-            <span id="sell-modal-cash-calc" class="tabular-nums" style="font-size:1.25rem; font-weight:800; color:var(--emerald-primary);">Rs. 2,750</span>
-          </div>
-
-          <div style="display:flex; gap:0.75rem;">
-            <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-sell-eggs">Cancel</button>
-            <button class="btn-emerald" style="flex:2;" onclick="window.EHMUser.confirmSellEggs()">
-              <i class="fa-solid fa-money-bill-wave"></i> Confirm & Liquidate
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Transactions Modal -->
-    <div class="modal-overlay" id="modal-transactions">
-      <div class="modal-card" style="max-width:680px;">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold-primary);"></i> Ledger & Transactions</h3>
-          <button class="modal-close-btn" data-close-modal="modal-transactions">&times;</button>
-        </div>
-        <div class="table-responsive" style="max-height:420px; overflow-y:auto;">
-          <table class="ehm-table">
-            <thead>
-              <tr>
-                <th>Tx ID</th>
-                <th>Type</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="user-full-tx-table">
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Profile Modal -->
-    <div class="modal-overlay" id="modal-profile">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-circle-user" style="color:var(--gold-primary);"></i> Account Profile</h3>
-          <button class="modal-close-btn" data-close-modal="modal-profile">&times;</button>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.85rem;">
-          <div>
-            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Full Name</label>
-            <input type="text" id="profile-name" class="form-input" style="width:100%;" value="Sultan Agro Farms" />
-          </div>
-          <div>
-            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Mobile Number</label>
-            <input type="text" id="profile-phone" class="form-input" style="width:100%;" value="0327272727" />
-          </div>
-          <div>
-            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Email Address</label>
-            <input type="email" id="profile-email" class="form-input" style="width:100%;" value="investor@egghenmarket.com" />
-          </div>
-          <div>
-            <label style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Account Status</label>
-            <div style="padding:0.5rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.25); border-radius:8px; color:var(--emerald-primary); font-size:0.85rem; font-weight:600;">
-              <i class="fa-solid fa-shield-check"></i> Active & Verified Merchant
-            </div>
-          </div>
-          <button class="btn-gold" style="margin-top:0.5rem;" onclick="window.EHMApp.showToast('Profile updated!', 'success'); window.EHMApp.closeModal('modal-profile');">
-            <i class="fa-solid fa-floppy-disk"></i> Update Profile
-          </button>
-          <button class="btn-outline-gold" style="color:#EF4444; border-color:rgba(239,68,68,0.3);" onclick="window.EHMApp.logout()">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- FBR Certificate Modal -->
-    <div class="modal-overlay" id="modal-fbr-certificate">
-      <div class="modal-card" style="text-align:center;">
-        <div class="modal-header">
-          <h3 class="modal-title" style="margin:0 auto;"><i class="fa-solid fa-stamp" style="color:var(--gold-primary);"></i> FBR Official Tax Certification</h3>
-          <button class="modal-close-btn" data-close-modal="modal-fbr-certificate">&times;</button>
-        </div>
-        <div>
-          <img src="/src/assets/images/certificate_fbr_seal_1790364515852.jpg" alt="FBR Tax Seal" style="width:110px; height:110px; margin:0 auto 1rem; border-radius:50%; border:2px solid var(--gold-primary); box-shadow:var(--shadow-gold);" referrerpolicy="no-referrer" />
-          <h4 style="color:#FFF; font-size:1.1rem; font-weight:700; margin-bottom:0.25rem;">Government of Pakistan</h4>
-          <p style="font-size:0.8rem; color:var(--gold-light); margin-bottom:1rem;">Federal Board of Revenue · Tax Registration</p>
-          
-          <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1rem; text-align:left; font-size:0.82rem; margin-bottom:1.25rem;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-              <span style="color:var(--text-muted);">Business Title:</span>
-              <strong style="color:#FFF;">Egg Hen Market Agro (Pvt) Ltd</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-              <span style="color:var(--text-muted);">NTN Number:</span>
-              <strong style="color:var(--gold-light);" class="tabular-nums">8294710-3</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-              <span style="color:var(--text-muted);">Category:</span>
-              <strong style="color:#FFF;">Poultry Farming & Egg Wholesale</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between;">
-              <span style="color:var(--text-muted);">Verification:</span>
-              <strong style="color:var(--emerald-primary);"><i class="fa-solid fa-check-circle"></i> Active & Compliant</strong>
-            </div>
-          </div>
-          <button class="btn-gold" style="width:100%;" data-close-modal="modal-fbr-certificate">Close Certificate</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Deposit Modal -->
-    <div class="modal-overlay" id="modal-deposit">
-      <div class="modal-card" style="max-width:480px;">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-arrow-down-to-bracket" style="color:var(--gold-primary);"></i> Deposit Funds to Wallet</h3>
-          <button class="modal-close-btn" data-close-modal="modal-deposit">&times;</button>
-        </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem;">
         
-        <div>
-          <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.5rem; font-weight:600;">
-            1. Select Deposit Gateway
-          </label>
-          <div class="payment-methods-grid">
-            <div class="payment-method-card active" data-method="JazzCash" onclick="window.EHMUser.selectDepositMethod('JazzCash')">
-              <span class="payment-method-icon" style="color:#F59E0B;"><i class="fa-solid fa-mobile-screen"></i></span>
-              <strong style="font-size:0.82rem; color:#FFF; display:block;">JazzCash</strong>
-              <span style="font-size:0.68rem; color:var(--text-muted);">Till / Mobile</span>
+        <!-- EasyPaisa Box -->
+        <div class="payment-box-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <div style="width:36px; height:36px; border-radius:8px; background:rgba(16,185,129,0.15); color:var(--emerald-primary); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                <i class="fa-solid fa-wallet"></i>
+              </div>
+              <div>
+                <strong style="color:#FFF; font-size:0.95rem;">EasyPaisa (ایزی پیسہ)</strong>
+                <span style="font-size:0.7rem; color:var(--text-muted); display:block;">آفیشل مرچنٹ والیٹ</span>
+              </div>
             </div>
-            <div class="payment-method-card" data-method="EasyPaisa" onclick="window.EHMUser.selectDepositMethod('EasyPaisa')">
-              <span class="payment-method-icon" style="color:#10B981;"><i class="fa-solid fa-money-bill-wave"></i></span>
-              <strong style="font-size:0.82rem; color:#FFF; display:block;">EasyPaisa</strong>
-              <span style="font-size:0.68rem; color:var(--text-muted);">Instant Wallet</span>
-            </div>
-            <div class="payment-method-card" data-method="Bank" onclick="window.EHMUser.selectDepositMethod('Bank')">
-              <span class="payment-method-icon" style="color:#60A5FA;"><i class="fa-solid fa-building-columns"></i></span>
-              <strong style="font-size:0.82rem; color:#FFF; display:block;">Bank Transfer</strong>
-              <span style="font-size:0.68rem; color:var(--text-muted);">Meezan / All</span>
-            </div>
+            <span class="badge-status active">ACTIVE</span>
           </div>
 
-          <!-- Official Payment Details Card -->
-          <div style="background:rgba(0,0,0,0.45); border:1px solid var(--border-gold); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1.15rem;">
-            <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-gold); font-weight:700; margin-bottom:0.35rem;" id="deposit-acc-bank">
-              JazzCash Digital Wallet
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
-              <span style="font-size:0.8rem; color:var(--text-muted);">Account Title:</span>
-              <strong id="deposit-acc-title" style="font-size:0.85rem; color:#FFF;">Egg Hen Market Official Treasury</strong>
+          <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:0.75rem; font-size:0.8rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+              <span style="color:var(--text-muted);">Account Title:</span>
+              <strong style="color:#FFF;">Egg Hen Market Official</strong>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:0.8rem; color:var(--text-muted);">Account / Till No:</span>
+              <span style="color:var(--text-muted);">Account Number:</span>
               <div style="display:flex; align-items:center; gap:0.4rem;">
-                <strong id="deposit-acc-number" class="tabular-nums" style="font-size:0.95rem; color:var(--gold-light);">0300-8472910</strong>
-                <button class="btn-outline-gold" style="padding:0.15rem 0.45rem; font-size:0.68rem;" onclick="window.EHMApp.copyText(document.getElementById('deposit-acc-number').textContent, 'Account number copied!')">
+                <strong class="tabular-nums" style="color:var(--gold-light); font-size:1rem;">0327272727</strong>
+                <button class="btn-gold" style="padding:0.15rem 0.5rem; font-size:0.7rem; border-radius:4px;" onclick="window.EHMApp.copyText('0327272727', 'EasyPaisa نمبر کاپی ہو گیا ہے!')">
                   <i class="fa-regular fa-copy"></i>
                 </button>
               </div>
             </div>
           </div>
-
-          <!-- Amount Input & Quick Chips -->
-          <div style="margin-bottom:1rem;">
-            <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.4rem; font-weight:600;">
-              2. Enter Deposit Amount (Rs.)
-            </label>
-            <input type="number" id="deposit-input-amount" class="form-input" style="width:100%; font-size:1.15rem; font-weight:700; text-align:center; margin-bottom:0.6rem;" min="200" step="100" value="5000" />
-            <div class="amount-chips-grid">
-              <div class="amount-chip" onclick="window.EHMUser.setDepositAmount(1000)">Rs. 1,000</div>
-              <div class="amount-chip" onclick="window.EHMUser.setDepositAmount(2500)">Rs. 2,500</div>
-              <div class="amount-chip" onclick="window.EHMUser.setDepositAmount(5000)">Rs. 5,000</div>
-              <div class="amount-chip" onclick="window.EHMUser.setDepositAmount(10000)">Rs. 10,000</div>
-              <div class="amount-chip" onclick="window.EHMUser.setDepositAmount(25000)">Rs. 25,000</div>
-              <div class="amount-chip" onclick="window.EHMUser.setDepositAmount(50000)">Rs. 50,000</div>
-            </div>
-          </div>
-
-          <!-- Transaction ID / Reference -->
-          <div style="margin-bottom:1.25rem;">
-            <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:600;">
-              3. Transaction ID / Reference No.
-            </label>
-            <input type="text" id="deposit-input-trx" class="form-input" style="width:100%; font-size:0.9rem;" placeholder="e.g. TID-98421035 or 12-digit Sender Ref" />
-            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:0.25rem;">
-              Funds are automatically credited or verified immediately by treasury.
-            </span>
-          </div>
-
-          <div style="display:flex; gap:0.75rem;">
-            <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-deposit">Cancel</button>
-            <button class="btn-gold" style="flex:2;" onclick="window.EHMUser.submitDeposit()">
-              <i class="fa-solid fa-arrow-down-to-bracket"></i> Confirm Deposit
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Withdrawal Modal -->
-    <div class="modal-overlay" id="modal-withdrawal">
-      <div class="modal-card" style="max-width:480px;">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-arrow-up-from-bracket" style="color:var(--emerald-primary);"></i> Withdraw Cash Funds</h3>
-          <button class="modal-close-btn" data-close-modal="modal-withdrawal">&times;</button>
-        </div>
-
-        <div>
-          <!-- Available Balance Display -->
-          <div style="background:rgba(16,185,129,0.08); border:1px solid var(--border-emerald); border-radius:12px; padding:0.85rem 1rem; margin-bottom:1.15rem; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--emerald-primary); font-weight:700;">
-                Available Cash Balance
-              </div>
-              <div id="withdraw-modal-available-balance" class="tabular-nums" style="font-size:1.35rem; font-weight:800; color:#FFF;">
-                Rs. 14,500
-              </div>
-            </div>
-            <button class="btn-outline-gold" style="font-size:0.72rem; padding:0.25rem 0.65rem;" onclick="window.EHMUser.setWithdrawMax()">
-              Max Amount
-            </button>
-          </div>
-
-          <!-- Payout Method -->
-          <div style="margin-bottom:1rem;">
-            <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:600;">
-              Payout Method
-            </label>
-            <select id="withdraw-select-method" class="form-input" style="width:100%;">
-              <option value="JazzCash">JazzCash (Instant Mobile Wallet)</option>
-              <option value="EasyPaisa">EasyPaisa (Instant Account)</option>
-              <option value="Bank Transfer">Bank Transfer (Meezan, HBL, UBL, Alfalah)</option>
-              <option value="Nayapay / Sadapay">Nayapay / Sadapay</option>
-            </select>
-          </div>
-
-          <!-- Account Title & Number -->
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem; margin-bottom:1rem;">
-            <div>
-              <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:600;">
-                Account Title
-              </label>
-              <input type="text" id="withdraw-input-title" class="form-input" style="width:100%; font-size:0.85rem;" value="Sultan Agro Farms" />
-            </div>
-            <div>
-              <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:600;">
-                Account / IBAN
-              </label>
-              <input type="text" id="withdraw-input-number" class="form-input" style="width:100%; font-size:0.85rem;" value="0327272727" />
-            </div>
-          </div>
-
-          <!-- Withdrawal Amount -->
-          <div style="margin-bottom:1.15rem;">
-            <label style="display:block; font-size:0.75rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:600;">
-              Withdrawal Amount (Rs.)
-            </label>
-            <input type="number" id="withdraw-input-amount" class="form-input" style="width:100%; font-size:1.15rem; font-weight:700; text-align:center;" min="500" step="100" value="5000" />
-            <span style="font-size:0.7rem; color:var(--text-muted); display:block; margin-top:0.25rem;">
-              Minimum withdrawal: Rs. 500 · Processed within 5-15 minutes.
-            </span>
-          </div>
-
-          <!-- Breakdown Summary -->
-          <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:0.75rem 1rem; margin-bottom:1.25rem; font-size:0.82rem;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-              <span style="color:var(--text-muted);">Requested Amount:</span>
-              <strong id="withdraw-summary-requested" class="tabular-nums" style="color:#FFF;">Rs. 5,000</strong>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
-              <span style="color:var(--text-muted);">Processing Fee (0%):</span>
-              <span style="color:var(--emerald-primary);">Rs. 0 (Free)</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.08); padding-top:0.35rem;">
-              <span style="color:var(--text-secondary); font-weight:600;">Net Payout:</span>
-              <strong id="withdraw-summary-net" class="tabular-nums" style="color:var(--emerald-primary); font-size:0.95rem;">Rs. 5,000</strong>
-            </div>
-          </div>
-
-          <div style="display:flex; gap:0.75rem;">
-            <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-withdrawal">Cancel</button>
-            <button class="btn-emerald" style="flex:2;" onclick="window.EHMUser.submitWithdrawal()">
-              <i class="fa-solid fa-arrow-up-from-bracket"></i> Submit Withdrawal
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Demo Top Up Modal -->
-    <div class="modal-overlay" id="modal-topup">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-wallet" style="color:var(--emerald-primary);"></i> Top Up Cash Wallet (Demo)</h3>
-          <button class="modal-close-btn" data-close-modal="modal-topup">&times;</button>
-        </div>
-        <div>
-          <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1rem;">
-            Inject test liquidity into your wallet to purchase starter or commercial hen packages.
+          <p style="font-size:0.72rem; color:var(--text-secondary); margin:0;">
+            EasyPaisa ایپ سے رقم منتقل کر کے 11 ہندسوں کی Trx ID اور رسید محفوظ کریں۔
           </p>
-          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.65rem; margin-bottom:1.25rem;">
-            <button class="btn-outline-gold" onclick="window.EHMUser.topUpDemoBalance(5000)">+ Rs. 5,000</button>
-            <button class="btn-gold" onclick="window.EHMUser.topUpDemoBalance(15000)">+ Rs. 15,000</button>
-            <button class="btn-emerald" onclick="window.EHMUser.topUpDemoBalance(50000)">+ Rs. 50,000</button>
-          </div>
-          <button class="btn-outline-gold" style="width:100%;" data-close-modal="modal-topup">Cancel</button>
         </div>
+
+        <!-- JazzCash Box -->
+        <div class="payment-box-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <div style="width:36px; height:36px; border-radius:8px; background:rgba(212,175,55,0.15); color:var(--gold-primary); display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+              </div>
+              <div>
+                <strong style="color:#FFF; font-size:0.95rem;">JazzCash (جیز کیش)</strong>
+                <span style="font-size:0.7rem; color:var(--text-muted); display:block;">آفیشل اکاؤنٹ</span>
+              </div>
+            </div>
+            <span class="badge-status active">ACTIVE</span>
+          </div>
+
+          <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:0.75rem; font-size:0.8rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+              <span style="color:var(--text-muted);">Account Title:</span>
+              <strong style="color:#FFF;">Muhammad Sultan (Egg Hen Admin)</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:var(--text-muted);">Account Number:</span>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <strong class="tabular-nums" style="color:var(--gold-light); font-size:1rem;">03008472910</strong>
+                <button class="btn-gold" style="padding:0.15rem 0.5rem; font-size:0.7rem; border-radius:4px;" onclick="window.EHMApp.copyText('03008472910', 'JazzCash نمبر کاپی ہو گیا ہے!')">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:0.72rem; color:var(--text-secondary); margin:0;">
+            JazzCash ایپ یا *786# سے رقم منتقل کر کے سکرین شاٹ لگائیں۔
+          </p>
+        </div>
+
+        <!-- Bank Box -->
+        <div class="payment-box-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <div style="width:36px; height:36px; border-radius:8px; background:rgba(59,130,246,0.15); color:#60A5FA; display:flex; align-items:center; justify-content:center; font-size:1.2rem;">
+                <i class="fa-solid fa-building-columns"></i>
+              </div>
+              <div>
+                <strong style="color:#FFF; font-size:0.95rem;">Meezan Bank (میزان بینک)</strong>
+                <span style="font-size:0.7rem; color:var(--text-muted); display:block;">اسلامک کارپوریٹ اکاؤنٹ</span>
+              </div>
+            </div>
+            <span class="badge-status active">ACTIVE</span>
+          </div>
+
+          <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:0.75rem; font-size:0.8rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:0.25rem;">
+              <span style="color:var(--text-muted);">Account Title:</span>
+              <strong style="color:#FFF;">Egg Hen Market Agro PVT LTD</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="color:var(--text-muted);">Account / IBAN:</span>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <strong class="tabular-nums" style="color:var(--gold-light); font-size:0.95rem;">0102030405060708</strong>
+                <button class="btn-gold" style="padding:0.15rem 0.5rem; font-size:0.7rem; border-radius:4px;" onclick="window.EHMApp.copyText('0102030405060708', 'بینک اکاؤنٹ کاپی ہو گیا ہے!')">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:0.72rem; color:var(--text-secondary); margin:0;">
+            1Link / Raast یا کسی بھی بینکنگ ایپ سے رقم بھیج کر رسید لگائیں۔
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. FBR TAX LICENSE & TRUST (گورنمنٹ تصدیق) -->
+    <section id="fbr-trust" style="margin-bottom:4rem; background:rgba(0,0,0,0.35); border:1px solid var(--border-gold); border-radius:18px; padding:2rem;">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.5rem;">
+        <div style="display:flex; align-items:center; gap:1.25rem;">
+          <img src="/src/assets/images/certificate_fbr_seal_1790364515852.jpg" alt="FBR Seal" style="width:85px; height:85px; border-radius:50%; border:2px solid var(--gold-primary);" referrerpolicy="no-referrer" />
+          <div>
+            <div style="font-size:0.75rem; color:var(--gold-light); text-transform:uppercase; font-weight:700;">Government of Pakistan Registered</div>
+            <h3 style="font-size:1.35rem; color:#FFF; font-weight:700; margin:0.2rem 0;">Federal Board of Revenue (FBR) Certified</h3>
+            <div style="font-size:0.82rem; color:var(--text-secondary);">
+              National Tax Number (NTN): <strong style="color:var(--gold-light);" class="tabular-nums">8294710-3</strong> • 100% Tax Compliant Poultry Farm
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-outline-gold" style="padding:0.6rem 1.25rem; font-size:0.85rem;" onclick="window.EHMApp.openModal('modal-fbr-certificate')">
+          <i class="fa-solid fa-certificate"></i> سرکاری سرٹیفکیٹ دیکھیں
+        </button>
+      </div>
+    </section>
+
+    <!-- 5. WHATSAPP SUPPORT -->
+    <section style="background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.3); border-radius:18px; padding:2rem; text-align:center;">
+      <div style="color:#25D366; font-size:2rem; margin-bottom:0.5rem;">
+        <i class="fa-brands fa-whatsapp"></i>
+      </div>
+      <h3 style="font-size:1.35rem; color:#FFF; font-weight:700; margin-bottom:0.4rem;">
+        آفیشل واٹس ایپ ہیلپ لائن اور سپورٹ
+      </h3>
+      <p style="font-size:0.85rem; color:var(--text-secondary); max-width:550px; margin:0 auto 1.25rem;">
+        ادائیگی کی تصدیق، مرغیوں کے پیکجز، یا انڈوں کی فروخت کے حوالے سے براہ راست آن لائن رابطہ کریں۔
+      </p>
+      <div style="display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap;">
+        <a href="https://wa.me/923008472910" target="_blank" class="btn-emerald" style="padding:0.6rem 1.25rem; font-size:0.85rem; text-decoration:none;">
+          <i class="fa-brands fa-whatsapp"></i> ہیلپ لائن 1 (0300-8472910)
+        </a>
+        <a href="https://wa.me/92327272727" target="_blank" class="btn-emerald" style="padding:0.6rem 1.25rem; font-size:0.85rem; text-decoration:none;">
+          <i class="fa-brands fa-whatsapp"></i> ہیلپ لائن 2 (0327-272727)
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer style="background:#04090B; border-top:1px solid var(--border-gold); padding:2rem 1rem; text-align:center; font-size:0.8rem; color:var(--text-muted);">
+    <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+      <div style="display:flex; align-items:center; gap:0.5rem; color:#FFF; font-weight:700;">
+        <i class="fa-solid fa-egg" style="color:var(--gold-primary);"></i> EGG HEN MARKET
+      </div>
+      <div style="display:flex; gap:1.25rem;">
+        <a href="user.html" style="color:var(--text-secondary); text-decoration:none;">یوزر پورٹل</a>
+        <a href="admin.html" style="color:var(--text-secondary); text-decoration:none;">ایڈمن کنسول</a>
+        <a href="login.html" style="color:var(--text-secondary); text-decoration:none;">لاگ ان پیج</a>
+      </div>
+      <div>
+        © 2026 Egg Hen Market Agro (Pvt) Ltd. All Rights Reserved.
       </div>
     </div>
+  </footer>
 
-    <!-- Notifications Drawer Modal -->
-    <div class="modal-overlay" id="modal-notifications">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-regular fa-bell" style="color:var(--gold-primary);"></i> Notifications & Market Alerts</h3>
-          <button class="modal-close-btn" data-close-modal="modal-notifications">&times;</button>
-        </div>
-        <div id="notifications-drawer-list"></div>
+  <!-- FBR Certificate Modal -->
+  <div class="modal-overlay" id="modal-fbr-certificate">
+    <div class="modal-card" style="text-align:center; max-width:440px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="margin:0 auto;">
+          <i class="fa-solid fa-stamp" style="color:var(--gold-primary);"></i>
+          FBR Official Tax Certification
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-fbr-certificate">&times;</button>
       </div>
-    </div>
-
-    <!-- Menu Drawer Modal -->
-    <div class="modal-overlay" id="modal-menu-drawer">
-      <div class="modal-card" style="max-width:340px;">
-        <div class="modal-header">
-          <div class="brand-badge">
-            <div class="brand-icon-wrap" style="width:34px; height:34px; font-size:1rem;"><i class="fa-solid fa-egg"></i></div>
-            <span class="brand-name" style="font-size:1rem;">EGG HEN MARKET</span>
+      <div>
+        <img src="/src/assets/images/certificate_fbr_seal_1790364515852.jpg" alt="FBR Tax Seal" style="width:110px; height:110px; margin:0 auto 1rem; border-radius:50%; border:2px solid var(--gold-primary);" referrerpolicy="no-referrer" />
+        <h4 style="color:#FFF; font-size:1.1rem; font-weight:700; margin-bottom:0.25rem;">Government of Pakistan</h4>
+        <p style="font-size:0.8rem; color:var(--gold-light); margin-bottom:1rem;">Federal Board of Revenue · Tax Registration</p>
+        
+        <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:1rem; text-align:left; font-size:0.82rem; margin-bottom:1.25rem;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+            <span style="color:var(--text-muted);">Business Title:</span>
+            <strong style="color:#FFF;">Egg Hen Market Agro (Pvt) Ltd</strong>
           </div>
-          <button class="modal-close-btn" data-close-modal="modal-menu-drawer">&times;</button>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:0.5rem;">
-          <a href="user.html" class="admin-nav-link active"><i class="fa-solid fa-house"></i> User Dashboard</a>
-          <a href="admin.html" class="admin-nav-link"><i class="fa-solid fa-shield-halved"></i> Admin Console</a>
-          <a href="#section-buy-hens" class="admin-nav-link" data-close-modal="modal-menu-drawer"><i class="fa-solid fa-cart-shopping"></i> Buy Hens</a>
-          <a href="#section-sell-eggs" class="admin-nav-link" data-close-modal="modal-menu-drawer"><i class="fa-solid fa-sack-dollar"></i> Sell Eggs</a>
-          <a href="login.html" class="admin-nav-link"><i class="fa-solid fa-right-to-bracket"></i> Login Switcher</a>
-          <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border-subtle); display:flex; flex-direction:column; gap:0.5rem;">
-            <button class="btn-gold" style="width:100%;" onclick="window.EHMUser.openDepositModal(); window.EHMApp.closeModal('modal-menu-drawer');">
-              <i class="fa-solid fa-arrow-down-to-bracket"></i> Deposit Funds
-            </button>
-            <button class="btn-emerald" style="width:100%;" onclick="window.EHMUser.openWithdrawModal(); window.EHMApp.closeModal('modal-menu-drawer');">
-              <i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw Cash
-            </button>
-            <button class="btn-outline-gold" style="width:100%; color:#EF4444;" onclick="window.EHMApp.logout()">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
-            </button>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+            <span style="color:var(--text-muted);">NTN Number:</span>
+            <strong style="color:var(--gold-light);" class="tabular-nums">8294710-3</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.35rem;">
+            <span style="color:var(--text-muted);">Category:</span>
+            <strong style="color:#FFF;">Poultry Farming & Egg Wholesale</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted);">Verification:</span>
+            <strong style="color:var(--emerald-primary);"><i class="fa-solid fa-check-circle"></i> Active & Compliant</strong>
           </div>
         </div>
+
+        <button class="btn-gold" style="width:100%;" data-close-modal="modal-fbr-certificate">بند کریں (Close)</button>
       </div>
     </div>
+  </div>
 
-    <!-- Team Bonus Modal -->
-    <div class="modal-overlay" id="modal-bonus">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i> Team Bonus Rules</h3>
-          <button class="modal-close-btn" data-close-modal="modal-bonus">&times;</button>
-        </div>
-        <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
-          <p style="margin-bottom:0.75rem;">Earn direct cash and daily laying yields from your referral team structure:</p>
-          <ul style="padding-left:1.25rem; margin-bottom:1rem; color:#FFF;">
-            <li><strong>Tier 1 Direct Bonus:</strong> 7.5% instant cash credited upon hen plan activation.</li>
-            <li><strong>Daily Egg Commission:</strong> +5.0 Bonus eggs credited daily from active team flocks.</li>
-            <li><strong>Tier 2 Secondary Bonus:</strong> 2.5% lifetime passive commission.</li>
-          </ul>
-          <button class="btn-gold" style="width:100%;" data-close-modal="modal-bonus">Understood</button>
-        </div>
+  <!-- Manual Payment & Hen Purchase Modal (5-Step Flow) -->
+  <div class="modal-overlay" id="modal-manual-payment">
+    <div class="modal-card" style="max-width:520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-cart-shopping" style="color:var(--gold-primary);"></i>
+          خریداری اور ادائیگی (Manual Payment & Hen Order)
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-manual-payment">&times;</button>
       </div>
-    </div>
 
-    <!-- Mega Gifts Modal -->
-    <div class="modal-overlay" id="modal-gifts">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-gift" style="color:#A78BFA;"></i> Mega Seasonal Rewards</h3>
-          <button class="modal-close-btn" data-close-modal="modal-gifts">&times;</button>
-        </div>
-        <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
-          <p style="margin-bottom:0.75rem;">Monthly volume milestones rewarded with premium prizes:</p>
-          <div style="background:rgba(0,0,0,0.3); border-radius:12px; padding:0.85rem; margin-bottom:1rem;">
-            <div style="color:var(--gold-light); font-weight:700; margin-bottom:0.25rem;">Milestone 1: 50+ Flock Units</div>
-            <div>Bonus Android smartphone + 100 free layer eggs.</div>
+      <div>
+        <!-- 1. کوانٹٹی ہو جیسے مرغیاں سلیکٹ کریں -->
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:flex; justify-content:space-between; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.4rem; font-weight:700;">
+            <span>1. کوانٹٹی منتخب کریں (Select Hens Quantity)</span>
+            <span style="color:var(--text-muted);">Rs. 580 فی مرغی</span>
+          </label>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 1rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(-5)">-5</button>
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 0.8rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(-1)">-1</button>
+            <input type="number" id="manual-hens-qty" class="form-input tabular-nums" style="flex:1; text-align:center; font-size:1.35rem; font-weight:800; color:var(--gold-light);" min="1" max="1000" value="10" oninput="window.EHMUser.calcManualPayment()" />
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 0.8rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(1)">+1</button>
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 1rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(5)">+5</button>
           </div>
-          <div style="background:rgba(0,0,0,0.3); border-radius:12px; padding:0.85rem; margin-bottom:1rem;">
-            <div style="color:var(--gold-light); font-weight:700; margin-bottom:0.25rem;">Milestone 2: 250+ Flock Units</div>
-            <div>Honda CD-70 Motorbike or equivalent cash voucher.</div>
+          <div class="amount-chips-grid" style="margin-top:0.5rem; grid-template-columns:repeat(4, 1fr);">
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(5)">5 مرغیاں</div>
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(10)">10 مرغیاں</div>
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(25)">25 مرغیاں</div>
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(50)">50 مرغیاں</div>
           </div>
-          <button class="btn-gold" style="width:100%;" data-close-modal="modal-gifts">Close</button>
         </div>
-      </div>
-    </div>
 
-    <!-- Active Hens Modal -->
-    <div class="modal-overlay" id="modal-active-hens">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title"><i class="fa-solid fa-feather" style="color:var(--gold-primary);"></i> Active Flock Inventory</h3>
-          <button class="modal-close-btn" data-close-modal="modal-active-hens">&times;</button>
-        </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; padding:0.75rem; background:rgba(0,0,0,0.3); border-radius:10px; margin-bottom:1rem;">
+        <!-- 2. نیچے پیمنٹ شو ہو جائے -->
+        <div style="background:linear-gradient(135deg, rgba(6,46,37,0.7) 0%, rgba(12,20,23,0.9) 100%); border:1px solid var(--border-gold); border-radius:12px; padding:0.9rem 1.1rem; margin-bottom:1.15rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <div style="font-size:0.72rem; color:var(--text-muted);">ACTIVE BIRDS</div>
-              <div style="font-size:1.25rem; font-weight:800; color:#FFF;" id="modal-active-hens-count">16 Layers</div>
+              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted);">کل واجب الادا رقم (Total Payable Amount)</div>
+              <div id="manual-payment-total" class="tabular-nums" style="font-size:1.6rem; font-weight:800; color:var(--gold-primary);">
+                Rs. 5,800
+              </div>
             </div>
             <div style="text-align:right;">
-              <div style="font-size:0.72rem; color:var(--text-muted);">ESTIMATED DAILY YIELD</div>
-              <div style="font-size:1.25rem; font-weight:800; color:var(--emerald-primary);">16.8 Eggs / Day</div>
+              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted);">روزانہ متوقع انڈے (Daily Yield)</div>
+              <div id="manual-payment-yield" class="tabular-nums" style="font-size:1.15rem; font-weight:700; color:var(--emerald-primary);">
+                +10.5 Eggs / Day
+              </div>
             </div>
           </div>
-          <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:1.25rem;">
-            Your hens are housed in certified temperature-controlled poultry facilities, monitored 24/7 with organic feed. Eggs are automatically cataloged into your Available Egg reserve every collection interval.
-          </p>
-          <button class="btn-gold" style="width:100%;" onclick="window.EHMApp.closeModal('modal-active-hens'); document.getElementById('section-buy-hens').scrollIntoView({behavior:'smooth'});">
-            <i class="fa-solid fa-cart-shopping"></i> Expand Flock
+        </div>
+
+        <!-- 3. ایزی پیسہ، جیز کیش نمبر پیمنٹ دیں -->
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.45rem; font-weight:700;">
+            3. ادائیگی کا طریقہ منتخب کریں (Select Payment Gateway)
+          </label>
+          <div class="payment-methods-grid" id="manual-gateways-container">
+            <!-- Populated via js/user.js -->
+          </div>
+
+          <!-- Selected Account Display Box with 1-Click Copy -->
+          <div id="manual-selected-account-box" style="margin-top:0.75rem; background:rgba(0,0,0,0.45); border:1px solid var(--border-gold); border-radius:12px; padding:0.85rem 1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+              <span style="font-size:0.78rem; color:var(--text-muted);">Account Title:</span>
+              <strong id="manual-acc-title" style="font-size:0.85rem; color:#FFF;">Egg Hen Market Official</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+              <span style="font-size:0.78rem; color:var(--text-muted);">Account Number:</span>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <strong id="manual-acc-number" class="tabular-nums" style="font-size:1.05rem; font-weight:800; color:var(--gold-light);">0327272727</strong>
+                <button type="button" class="btn-gold" style="padding:0.2rem 0.55rem; font-size:0.72rem; border-radius:6px;" onclick="window.EHMApp.copyText(document.getElementById('manual-acc-number').textContent, 'نمبر کاپی ہو گیا ہے!')">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+            </div>
+            <div id="manual-acc-instructions" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.4; border-top:1px dashed var(--border-subtle); padding-top:0.4rem; margin-top:0.4rem;">
+              EasyPaisa ایپ یا *786# سے رقم بھیجیں اور رسید کا سکرین شاٹ لیں۔
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction ID input -->
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:700;">
+            4. ٹرانزیکشن آئی ڈی (Transaction ID / TID)
+          </label>
+          <input type="text" id="manual-trx-id" class="form-input" style="width:100%; font-size:0.95rem; font-weight:600;" placeholder="e.g. TID-98210384 یا بھیجنے والے کا اکاؤنٹ نمبر" />
+        </div>
+
+        <!-- 5. نیچے چوز فائل اپ لوڈ -->
+        <div style="margin-bottom:1.35rem;">
+          <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.4rem; font-weight:700;">
+            5. ادائیگی کی رسید / سکرین شاٹ اپ لوڈ کریں (Choose File / Upload Proof)
+          </label>
+          <div style="position:relative; border:2px dashed var(--border-gold); border-radius:12px; padding:1rem; text-align:center; background:rgba(0,0,0,0.25); cursor:pointer;" onclick="document.getElementById('manual-proof-file').click()">
+            <input type="file" id="manual-proof-file" accept="image/*" style="display:none;" onchange="window.EHMUser.handleManualProofUpload(this)" />
+            <div id="manual-upload-placeholder">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.8rem; color:var(--gold-primary); margin-bottom:0.4rem;"></i>
+              <div style="font-size:0.85rem; font-weight:600; color:#FFF;">چوز فائل پر کلک کریں (Choose File)</div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">PNG, JPG, JPEG یا رسید کا سکرین شاٹ</div>
+            </div>
+            <div id="manual-upload-preview-wrap" style="display:none; text-align:center;">
+              <img id="manual-upload-preview-img" src="" alt="Proof Preview" style="max-height:140px; border-radius:8px; border:1px solid var(--border-gold); margin-bottom:0.35rem;" />
+              <div style="font-size:0.75rem; color:var(--emerald-primary);"><i class="fa-solid fa-circle-check"></i> فائل منتخب ہو گئی ہے (تبدیل کرنے کے لیے دوبارہ کلک کریں)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- کنفرم کریں -->
+        <div style="display:flex; gap:0.75rem;">
+          <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-manual-payment">منسوخ (Cancel)</button>
+          <button class="btn-gold" style="flex:2; font-weight:700; font-size:0.95rem; padding:0.75rem;" onclick="window.EHMUser.submitManualPaymentOrder()">
+            <i class="fa-solid fa-circle-check"></i> کنفرم کریں (Confirm Order)
           </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="js/firebase-bridge.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/user.js"></script>
-  </body>
+  <!-- Scripts -->
+  <script src="js/firebase-bridge.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/user.js"></script>
+  <script>
+    function switchLandingAuthTab(tab) {
+      const regBtn = document.getElementById('tab-btn-register');
+      const logBtn = document.getElementById('tab-btn-login');
+      const regForm = document.getElementById('landing-register-form');
+      const logForm = document.getElementById('landing-login-form');
+
+      if (tab === 'register') {
+        regBtn.classList.add('active');
+        logBtn.classList.remove('active');
+        regForm.style.display = 'block';
+        logForm.style.display = 'none';
+      } else {
+        logBtn.classList.add('active');
+        regBtn.classList.remove('active');
+        logForm.style.display = 'block';
+        regForm.style.display = 'none';
+      }
+    }
+
+    function scrollToAuth(tab) {
+      switchLandingAuthTab(tab);
+      const card = document.getElementById('landing-auth-card');
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth' });
+        card.style.boxShadow = '0 0 35px rgba(212,175,55,0.7)';
+        setTimeout(() => {
+          card.style.boxShadow = '0 20px 40px rgba(0,0,0,0.7)';
+        }, 1500);
+      }
+    }
+
+    async function handleLandingRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const pass = document.getElementById('reg-password').value;
+      const ref = document.getElementById('reg-referral').value.trim();
+
+      const res = await window.EHMStore.register(name, phone, pass, ref);
+      if (res && res.success) {
+        window.EHMApp.showToast('اکاؤنٹ کامیابی سے بن گیا ہے! یوزر ڈیش بورڈ کھولا جا رہا ہے...', 'success');
+        setTimeout(() => {
+          window.location.href = 'user.html';
+        }, 600);
+      } else {
+        window.EHMApp.showToast((res && res.message) || 'رجسٹریشن میں مسئلہ آیا ہے', 'error');
+      }
+    }
+
+    async function handleLandingLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-input-user').value.trim();
+      const p = document.getElementById('login-input-pass').value;
+
+      const res = await window.EHMStore.login(u, p);
+      if (res && res.success) {
+        window.EHMApp.showToast('لاگ ان کامیاب! ری ڈائریکٹ کیا جا رہا ہے...', 'success');
+        setTimeout(() => {
+          window.location.href = res.redirect || 'user.html';
+        }, 500);
+      } else {
+        window.EHMApp.showToast(res.message || 'غلط یوزرنیم یا پاس ورڈ', 'error');
+      }
+    }
+
+    // Landing Profit Calculator Helpers
+    function setCalcHens(qty) {
+      const input = document.getElementById('calc-hens-qty');
+      if (input) input.value = qty;
+      recalcLandingCalc();
+    }
+
+    function adjustCalcHens(delta) {
+      const input = document.getElementById('calc-hens-qty');
+      if (input) {
+        const cur = parseInt(input.value) || 25;
+        input.value = Math.max(1, cur + delta);
+        recalcLandingCalc();
+      }
+    }
+
+    function recalcLandingCalc() {
+      const input = document.getElementById('calc-hens-qty');
+      const qty = Math.max(1, parseInt(input ? input.value : 25) || 25);
+      const totalAmount = qty * 580;
+      const dailyEggs = (qty * 1.05).toFixed(1);
+      const monthlyIncome = Math.round(qty * 1.05 * 45 * 30);
+
+      const totalEl = document.getElementById('calc-total-amount');
+      const eggsEl = document.getElementById('calc-daily-eggs');
+      const cashEl = document.getElementById('calc-monthly-cash');
+
+      if (totalEl) totalEl.textContent = `Rs. ${totalAmount.toLocaleString()}`;
+      if (eggsEl) eggsEl.textContent = `${dailyEggs} Eggs`;
+      if (cashEl) cashEl.textContent = `Rs. ${monthlyIncome.toLocaleString()}`;
+    }
+
+    function triggerManualBuyFromCalc() {
+      const input = document.getElementById('calc-hens-qty');
+      const qty = Math.max(1, parseInt(input ? input.value : 25) || 25);
+      window.EHMUser.openManualPaymentModal(qty, `${qty} Hens Selected Flock`);
+    }
+
+    function renderLandingPackages() {
+      const container = document.getElementById('landing-packages-grid');
+      if (!container) return;
+
+      const packages = (window.EHMStore && window.EHMStore.getHenPackages)
+        ? window.EHMStore.getHenPackages()
+        : [];
+
+      if (packages.length === 0) return;
+
+      container.innerHTML = packages.map((pkg) => `
+        <div class="plan-card-luxury">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+              <span class="pkg-flock-badge" style="background:rgba(212,175,55,0.15); color:var(--gold-primary); padding:0.25rem 0.6rem; border-radius:20px; font-size:0.72rem; font-weight:700;">
+                ${pkg.tag || 'Flock Tier'}
+              </span>
+              <span style="font-size:0.75rem; color:var(--text-muted);"><i class="fa-solid fa-clock"></i> 365 Days</span>
+            </div>
+
+            <h3 style="font-size:1.25rem; font-weight:800; color:#FFF; margin-bottom:0.35rem;">${pkg.name}</h3>
+            <p style="font-size:0.78rem; color:var(--text-secondary); line-height:1.4; margin-bottom:1.25rem; min-height:36px;">
+              ${pkg.description || 'High performance layer flock for daily yields.'}
+            </p>
+
+            <div style="background:rgba(0,0,0,0.35); border-radius:12px; padding:0.85rem; margin-bottom:1.25rem;">
+              <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">Flock Birds:</span>
+                <strong style="color:#FFF;">${pkg.hens} Active Hens</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">Daily Egg Yield:</span>
+                <strong style="color:var(--emerald-primary);">+${pkg.dailyYield} Eggs / Day</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.82rem;">
+                <span style="color:var(--text-muted);">Est. Monthly Cash:</span>
+                <strong style="color:var(--gold-light);" class="tabular-nums">Rs. ${Math.round(pkg.dailyYield * 45 * 30).toLocaleString()}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.85rem;">
+              <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Price:</span>
+              <span class="tabular-nums" style="font-size:1.5rem; font-weight:800; color:var(--gold-primary);">Rs. ${pkg.price.toLocaleString()}</span>
+            </div>
+
+            <button class="btn-gold" style="width:100%; padding:0.65rem; font-weight:700; font-size:0.85rem; border-radius:10px;" onclick="window.EHMUser.openManualPaymentModal(${pkg.hens}, '${pkg.name}', '${pkg.id}')">
+              <i class="fa-solid fa-cart-shopping"></i> خریدیں (Buy Plan)
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.addEventListener('ehm_event', () => {
+      renderLandingPackages();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLandingPackages();
+      recalcLandingCalc();
+    });
+  </script>
+</body>
 </html>

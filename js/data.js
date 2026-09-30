@@ -19,6 +19,7 @@ class EggHenStore {
       purchases: [],
       henPackages: [],
       marketBuyers: [],
+      paymentMethods: [],
       transactions: [],
       notifications: [],
       eggSettings: {},
@@ -109,6 +110,7 @@ class EggHenStore {
         this.data.stats = stateRes.stats;
         this.data.henPackages = stateRes.henPackages || this.data.henPackages;
         this.data.marketBuyers = stateRes.marketBuyers || this.data.marketBuyers;
+        this.data.paymentMethods = stateRes.paymentMethods || this.data.paymentMethods;
         if (stateRes.settings) {
           this.data.eggSettings = stateRes.settings.eggSettings || {};
           this.data.referralSettings = stateRes.settings.referralSettings || {};
@@ -298,6 +300,34 @@ class EggHenStore {
     }
   }
 
+  async register(name, phone, password, referredBy = '') {
+    try {
+      const cleanPhone = (phone || '').trim();
+      const userData = {
+        name: name || 'Poultry Investor',
+        username: cleanPhone || `user_${Date.now().toString().slice(-4)}`,
+        phone: cleanPhone,
+        password: password || 'demo123',
+        referredBy: referredBy || 'Direct Landing'
+      };
+
+      const res = await this.createUser(userData);
+      if (res && res.success) {
+        this.setSession({
+          role: 'user',
+          username: res.user.username,
+          userId: res.user.id
+        });
+        await this.syncWithServer();
+        return { success: true, user: res.user, message: 'Account registered successfully!' };
+      }
+      return res || { success: false, message: 'Could not register user.' };
+    } catch (e) {
+      console.error(e);
+      return { success: false, message: 'Registration network error.' };
+    }
+  }
+
   // Hen Packages
   getHenPackages() {
     return this.data.henPackages || [];
@@ -390,6 +420,73 @@ class EggHenStore {
     }
   }
 
+  // Payment Gateways (EasyPaisa, JazzCash, Meezan Bank)
+  getPaymentMethods(onlyActive = false) {
+    const list = this.data.paymentMethods || [];
+    if (onlyActive) {
+      return list.filter((m) => m.status === 'active');
+    }
+    return list;
+  }
+
+  async addPaymentMethod(methodData) {
+    try {
+      const res = await fetch('/api/payment-methods', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(methodData)
+      });
+      const json = await res.json();
+      if (json.success) {
+        if (!this.data.paymentMethods) this.data.paymentMethods = [];
+        this.data.paymentMethods.push(json.paymentMethod);
+        this.saveCache();
+        this.broadcast('data_changed', this.data);
+      }
+      return json;
+    } catch (e) {
+      console.error(e);
+      return { success: false, message: 'Failed to add payment method.' };
+    }
+  }
+
+  async updatePaymentMethod(id, updates) {
+    try {
+      const res = await fetch(`/api/payment-methods/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+      const json = await res.json();
+      if (json.success) {
+        const idx = (this.data.paymentMethods || []).findIndex((m) => m.id === id);
+        if (idx !== -1) this.data.paymentMethods[idx] = json.paymentMethod;
+        this.saveCache();
+        this.broadcast('data_changed', this.data);
+      }
+      return json;
+    } catch (e) {
+      console.error(e);
+      return { success: false, message: 'Failed to update payment method.' };
+    }
+  }
+
+  async deletePaymentMethod(id) {
+    try {
+      const res = await fetch(`/api/payment-methods/${id}`, { method: 'DELETE' });
+      const json = await res.json();
+      if (json.success) {
+        this.data.paymentMethods = (this.data.paymentMethods || []).filter((m) => m.id !== id);
+        this.saveCache();
+        this.broadcast('data_changed', this.data);
+      }
+      return json;
+    } catch (e) {
+      console.error(e);
+      return { success: false, message: 'Failed to delete payment method.' };
+    }
+  }
+
   // Transactions Ledger
   getTransactions(filter = {}) {
     let txs = [...(this.data.transactions || [])];
@@ -411,8 +508,8 @@ class EggHenStore {
     return txs;
   }
 
-  // User Action: Deposit Request
-  async depositFunds(amount, method = 'JazzCash', trxId = '') {
+  // User Action: Deposit Request with Screenshot Proof
+  async depositFunds(amount, method = 'JazzCash', trxId = '', proofImage = null, accountTitle = '', accountNumber = '') {
     const user = this.getCurrentUser();
     if (!user || user.role === 'admin') return { success: false, message: 'Invalid session' };
 
@@ -424,7 +521,10 @@ class EggHenStore {
           userId: user.id,
           amount: Number(amount),
           method,
-          trxId
+          trxId,
+          proofImage,
+          accountTitle,
+          accountNumber
         })
       });
       const json = await res.json();
@@ -433,6 +533,36 @@ class EggHenStore {
     } catch (err) {
       console.error('Deposit error:', err);
       return { success: false, message: 'Network error submitting deposit.' };
+    }
+  }
+
+  // User Action: Manual Hen / Plan Purchase with Proof Screenshot
+  async buyHensManual(hensCount, amount, method = 'EasyPaisa', trxId = '', proofImage = null, packageName = '', packageId = null) {
+    const user = this.getCurrentUser();
+    if (!user || user.role === 'admin') return { success: false, message: 'Invalid session' };
+
+    try {
+      const res = await fetch('/api/purchases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          paymentType: 'manual',
+          hensCount: Number(hensCount),
+          amount: Number(amount),
+          method,
+          trxId,
+          proofImage,
+          packageName,
+          packageId
+        })
+      });
+      const json = await res.json();
+      await this.syncWithServer();
+      return json;
+    } catch (err) {
+      console.error('Manual buy error:', err);
+      return { success: false, message: 'Network error submitting hen order.' };
     }
   }
 

@@ -105,6 +105,10 @@
           <i class="fa-solid fa-bullhorn"></i>
           <span>Broadcast Alerts</span>
         </a>
+        <a href="#payment-methods" class="admin-nav-link" data-admin-tab="payment-methods">
+          <i class="fa-solid fa-credit-card"></i>
+          <span>Manual Payment Gateways</span>
+        </a>
         <a href="#settings" class="admin-nav-link" data-admin-tab="settings">
           <i class="fa-solid fa-sliders"></i>
           <span>System Settings</span>
@@ -866,6 +870,28 @@
           </div>
         </div>
 
+        <!-- SECTION 14: MANUAL PAYMENT GATEWAYS -->
+        <div id="section-payment-methods" class="admin-tab-section" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 style="font-size:1.25rem; font-weight:700; color:#FFF; margin-bottom:0.25rem;">
+                <i class="fa-solid fa-credit-card" style="color:var(--gold-primary);"></i>
+                Manual Payment Gateways (مینول پیمنٹ میتھڈز)
+              </h3>
+              <p style="font-size:0.8rem; color:var(--text-secondary);">
+                Configure official EasyPaisa, JazzCash, and Bank account numbers displayed to users during deposits and hen purchases.
+              </p>
+            </div>
+            <button class="btn-gold" onclick="window.EHMAdmin.openAddPaymentMethodModal()">
+              <i class="fa-solid fa-plus"></i> Add Payment Gateway
+            </button>
+          </div>
+
+          <div id="admin-payment-methods-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1.25rem;">
+            <!-- Populated via js/admin.js -->
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -905,6 +931,16 @@
           <div style="display:flex; justify-content:space-between;">
             <span style="color:var(--text-muted); font-size:0.8rem;">Submitted At:</span>
             <span id="deposit-modal-date" style="color:var(--text-secondary); font-size:0.8rem;">2026-09-30 08:30 AM</span>
+          </div>
+
+          <div id="deposit-modal-proof-wrap" style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px dashed var(--border-subtle); display:none;">
+            <span style="color:var(--text-gold); font-size:0.75rem; text-transform:uppercase; font-weight:700; display:block; margin-bottom:0.35rem;">
+              <i class="fa-solid fa-image"></i> Payment Receipt Screenshot
+            </span>
+            <div style="background:#000; border-radius:8px; border:1px solid var(--border-gold); padding:0.25rem; text-align:center;">
+              <img id="deposit-modal-proof-img" src="" alt="Proof" style="max-height:180px; max-width:100%; object-fit:contain; border-radius:6px; cursor:pointer;" onclick="window.open(this.src)" />
+            </div>
+            <span style="font-size:0.68rem; color:var(--text-muted); display:block; margin-top:0.2rem;">Click image to enlarge</span>
           </div>
         </div>
 
@@ -1154,6 +1190,56 @@
             <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-admin-package">Cancel</button>
             <button class="btn-gold" style="flex:2;" onclick="window.EHMAdmin.savePackage()">
               <i class="fa-solid fa-check"></i> Save Package
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Payment Method Modal -->
+  <div class="modal-overlay" id="modal-admin-payment-method">
+    <div class="modal-card" style="max-width:500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="pm-modal-title">
+          <i class="fa-solid fa-credit-card" style="color:var(--gold-primary);"></i>
+          Configure Payment Gateway
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-admin-payment-method">&times;</button>
+      </div>
+      <div>
+        <div style="display:flex; flex-direction:column; gap:0.9rem;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Method Name</label>
+            <input type="text" id="pm-input-name" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="e.g. EasyPaisa, JazzCash, Meezan Bank" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Account Title (نام اکاؤنٹ ہولڈر)</label>
+            <input type="text" id="pm-input-title" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="e.g. Egg Hen Market Official" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Account Number / Mobile No (اکاؤنٹ نمبر)</label>
+            <input type="text" id="pm-input-number" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="e.g. 0327272727 یا 03008472910" />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">IBAN / Additional Reference (اختیاری)</label>
+            <input type="text" id="pm-input-iban" class="form-input" style="width:100%; margin-top:0.3rem;" placeholder="PK45MEZN..." />
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">User Instructions (ہدایات)</label>
+            <textarea id="pm-input-instructions" class="form-input" style="width:100%; min-height:60px; margin-top:0.3rem;" placeholder="ہدایات برائے صارف: رقم بھیج کر Trx ID درج کریں اور سکرین شاٹ لگائیں۔"></textarea>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-gold); text-transform:uppercase;">Status (حیثیت)</label>
+            <select id="pm-input-status" class="form-input" style="width:100%; margin-top:0.3rem; background:#0C1417;">
+              <option value="active">Active (Visible to Users)</option>
+              <option value="inactive">Inactive / Hidden</option>
+            </select>
+          </div>
+          <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+            <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-admin-payment-method">Cancel</button>
+            <button class="btn-gold" style="flex:2;" onclick="window.EHMAdmin.savePaymentMethod()">
+              <i class="fa-solid fa-check"></i> Save Gateway
             </button>
           </div>
         </div>

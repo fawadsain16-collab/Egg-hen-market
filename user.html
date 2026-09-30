@@ -32,13 +32,6 @@
           <i class="fa-regular fa-bell" style="font-size:1.15rem;"></i>
           <span id="notification-badge-count" style="position:absolute; top:-4px; right:-4px; width:16px; height:16px; border-radius:50%; background:#EF4444; color:#FFF; font-size:0.65rem; font-weight:700; display:flex; align-items:center; justify-content:center;">3</span>
         </button>
-        <div class="user-quick-tag" onclick="window.EHMApp.openModal('modal-profile')" style="cursor:pointer;" title="View Profile">
-          <div class="status-dot-active"></div>
-          <span id="user-header-phone" class="tabular-nums" style="font-weight:600; color:#FFF;">0327272727</span>
-        </div>
-        <a href="admin.html" class="btn-outline-gold" style="padding:0.35rem 0.65rem; font-size:0.75rem;" title="Switch to Admin Dashboard">
-          <i class="fa-solid fa-shield-halved"></i> Admin
-        </a>
       </div>
     </div>
   </header>
@@ -958,6 +951,125 @@
         <button class="btn-gold" style="width:100%;" onclick="window.EHMApp.closeModal('modal-active-hens'); document.getElementById('section-buy-hens').scrollIntoView({behavior:'smooth'});">
           <i class="fa-solid fa-cart-shopping"></i> Expand Flock
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual Payment & Hen Purchase Modal (5-Step Flow) -->
+  <div class="modal-overlay" id="modal-manual-payment">
+    <div class="modal-card" style="max-width:520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-cart-shopping" style="color:var(--gold-primary);"></i>
+          خریداری اور ادائیگی (Manual Payment & Hen Order)
+        </h3>
+        <button class="modal-close-btn" data-close-modal="modal-manual-payment">&times;</button>
+      </div>
+
+      <div>
+        <!-- 1. کوانٹٹی ہو جیسے مرغیاں سلیکٹ کریں -->
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:flex; justify-content:space-between; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.4rem; font-weight:700;">
+            <span>1. کوانٹٹی منتخب کریں (Select Hens Quantity)</span>
+            <span style="color:var(--text-muted);">Rs. 580 فی مرغی</span>
+          </label>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 1rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(-5)">-5</button>
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 0.8rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(-1)">-1</button>
+            <input type="number" id="manual-hens-qty" class="form-input tabular-nums" style="flex:1; text-align:center; font-size:1.35rem; font-weight:800; color:var(--gold-light);" min="1" max="1000" value="10" oninput="window.EHMUser.calcManualPayment()" />
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 0.8rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(1)">+1</button>
+            <button class="btn-outline-gold" type="button" style="padding:0.45rem 1rem; font-size:1.1rem;" onclick="window.EHMUser.adjustManualHens(5)">+5</button>
+          </div>
+          <div class="amount-chips-grid" style="margin-top:0.5rem; grid-template-columns:repeat(4, 1fr);">
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(5)">5 مرغیاں</div>
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(10)">10 مرغیاں</div>
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(25)">25 مرغیاں</div>
+            <div class="amount-chip" onclick="window.EHMUser.setManualHens(50)">50 مرغیاں</div>
+          </div>
+        </div>
+
+        <!-- 2. نیچے پیمنٹ شو ہو جائے -->
+        <div style="background:linear-gradient(135deg, rgba(6,46,37,0.7) 0%, rgba(12,20,23,0.9) 100%); border:1px solid var(--border-gold); border-radius:12px; padding:0.9rem 1.1rem; margin-bottom:1.15rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted);">کل واجب الادا رقم (Total Payable Amount)</div>
+              <div id="manual-payment-total" class="tabular-nums" style="font-size:1.6rem; font-weight:800; color:var(--gold-primary);">
+                Rs. 5,800
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.72rem; text-transform:uppercase; color:var(--text-muted);">روزانہ متوقع انڈے (Daily Yield)</div>
+              <div id="manual-payment-yield" class="tabular-nums" style="font-size:1.15rem; font-weight:700; color:var(--emerald-primary);">
+                +10.5 Eggs / Day
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. ایزی پیسہ، جیز کیش نمبر پیمنٹ دیں -->
+        <div style="margin-bottom:1.1rem;">
+          <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.45rem; font-weight:700;">
+            3. ادائیگی کا طریقہ منتخب کریں (Select Payment Gateway)
+          </label>
+          <div class="payment-methods-grid" id="manual-gateways-container">
+            <!-- Dynamically populated or switchable EasyPaisa, JazzCash, Meezan Bank -->
+          </div>
+
+          <!-- Selected Account Display Box with 1-Click Copy -->
+          <div id="manual-selected-account-box" style="margin-top:0.75rem; background:rgba(0,0,0,0.45); border:1px solid var(--border-gold); border-radius:12px; padding:0.85rem 1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+              <span style="font-size:0.78rem; color:var(--text-muted);">Account Title:</span>
+              <strong id="manual-acc-title" style="font-size:0.85rem; color:#FFF;">Egg Hen Market Official</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+              <span style="font-size:0.78rem; color:var(--text-muted);">Account Number:</span>
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <strong id="manual-acc-number" class="tabular-nums" style="font-size:1.05rem; font-weight:800; color:var(--gold-light);">0327272727</strong>
+                <button type="button" class="btn-gold" style="padding:0.2rem 0.55rem; font-size:0.72rem; border-radius:6px;" onclick="window.EHMApp.copyText(document.getElementById('manual-acc-number').textContent, 'نمبر کاپی ہو گیا ہے!')">
+                  <i class="fa-regular fa-copy"></i> Copy
+                </button>
+              </div>
+            </div>
+            <div id="manual-acc-instructions" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.4; border-top:1px dashed var(--border-subtle); padding-top:0.4rem; margin-top:0.4rem;">
+              EasyPaisa ایپ یا *786# سے رقم بھیجیں اور رسید کا سکرین شاٹ لیں۔
+            </div>
+          </div>
+        </div>
+
+        <!-- Transaction ID input -->
+        <div style="margin-bottom:1rem;">
+          <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.35rem; font-weight:700;">
+            4. ٹرانزیکشن آئی ڈی (Transaction ID / TID)
+          </label>
+          <input type="text" id="manual-trx-id" class="form-input" style="width:100%; font-size:0.95rem; font-weight:600;" placeholder="e.g. TID-98210384 یا بھیجنے والے کا اکاؤنٹ نمبر" />
+        </div>
+
+        <!-- 5. نیچے چوز فائل اپ لوڈ -->
+        <div style="margin-bottom:1.35rem;">
+          <label style="display:block; font-size:0.78rem; text-transform:uppercase; color:var(--text-gold); margin-bottom:0.4rem; font-weight:700;">
+            5. ادائیگی کی رسید / سکرین شاٹ اپ لوڈ کریں (Choose File / Upload Proof)
+          </label>
+          <div style="position:relative; border:2px dashed var(--border-gold); border-radius:12px; padding:1rem; text-align:center; background:rgba(0,0,0,0.25); cursor:pointer;" onclick="document.getElementById('manual-proof-file').click()">
+            <input type="file" id="manual-proof-file" accept="image/*" style="display:none;" onchange="window.EHMUser.handleManualProofUpload(this)" />
+            <div id="manual-upload-placeholder">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.8rem; color:var(--gold-primary); margin-bottom:0.4rem;"></i>
+              <div style="font-size:0.85rem; font-weight:600; color:#FFF;">چوز فائل پر کلک کریں (Choose File)</div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">PNG, JPG, JPEG یا رسید کا سکرین شاٹ</div>
+            </div>
+            <div id="manual-upload-preview-wrap" style="display:none; text-align:center;">
+              <img id="manual-upload-preview-img" src="" alt="Proof Preview" style="max-height:140px; border-radius:8px; border:1px solid var(--border-gold); margin-bottom:0.35rem;" />
+              <div style="font-size:0.75rem; color:var(--emerald-primary);"><i class="fa-solid fa-circle-check"></i> فائل منتخب ہو گئی ہے (تبدیل کرنے کے لیے دوبارہ کلک کریں)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- کنفرم کریں -->
+        <div style="display:flex; gap:0.75rem;">
+          <button class="btn-outline-gold" style="flex:1;" data-close-modal="modal-manual-payment">منسوخ (Cancel)</button>
+          <button class="btn-gold" style="flex:2; font-weight:700; font-size:0.95rem; padding:0.75rem;" onclick="window.EHMUser.submitManualPaymentOrder()">
+            <i class="fa-solid fa-circle-check"></i> کنفرم کریں (Confirm Order)
+          </button>
+        </div>
       </div>
     </div>
   </div>

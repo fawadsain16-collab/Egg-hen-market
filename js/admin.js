@@ -82,6 +82,7 @@ class AdminDashboardController {
     this.renderBuyersManager();
     this.renderReferralsTable();
     this.renderTransactionsTable();
+    this.renderPaymentMethods();
     this.populateSettings();
   }
 
@@ -420,6 +421,18 @@ class AdminDashboardController {
     document.getElementById('deposit-modal-trx').textContent = dep.trxId;
     document.getElementById('deposit-modal-date').textContent = dep.createdAt;
     document.getElementById('deposit-modal-note').value = dep.adminNote || '';
+
+    const proofWrap = document.getElementById('deposit-modal-proof-wrap');
+    const proofImg = document.getElementById('deposit-modal-proof-img');
+    if (proofWrap && proofImg) {
+      if (dep.proofImage) {
+        proofImg.src = dep.proofImage;
+        proofWrap.style.display = 'block';
+      } else {
+        proofImg.src = '';
+        proofWrap.style.display = 'none';
+      }
+    }
 
     const actionsWrap = document.getElementById('deposit-modal-actions');
     if (actionsWrap) {
@@ -1046,7 +1059,164 @@ class AdminDashboardController {
       .join('');
   }
 
-  // 11. SYSTEM SETTINGS
+  // 11. MANUAL PAYMENT GATEWAYS MANAGEMENT
+  renderPaymentMethods() {
+    const container = document.getElementById('admin-payment-methods-grid');
+    if (!container) return;
+
+    const list = window.EHMStore.getPaymentMethods ? window.EHMStore.getPaymentMethods(false) : [];
+    if (list.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column:1/-1; padding:2rem; text-align:center; color:var(--text-muted); background:rgba(0,0,0,0.3); border-radius:12px;">
+          No payment gateways configured. Click "Add Payment Gateway" to set up EasyPaisa or JazzCash.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list
+      .map(
+        (m) => `
+      <div class="glass-panel" style="padding:1.25rem; border:1px solid ${m.status === 'active' ? 'var(--border-gold)' : 'var(--border-subtle)'}; position:relative;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem;">
+            <div style="width:38px; height:38px; border-radius:10px; background:rgba(212,175,55,0.15); color:${m.color || 'var(--gold-primary)'}; display:flex; align-items:center; justify-content:center; font-size:1.15rem;">
+              <i class="fa-solid ${m.icon || 'fa-wallet'}"></i>
+            </div>
+            <div>
+              <h4 style="font-size:0.95rem; font-weight:700; color:#FFF; margin:0;">${m.name}</h4>
+              <span style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">${m.type || 'Manual Gateway'}</span>
+            </div>
+          </div>
+          <span class="badge-status ${m.status === 'active' ? 'active' : 'inactive'}">
+            ${(m.status || 'active').toUpperCase()}
+          </span>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.35); border-radius:8px; padding:0.75rem; font-size:0.8rem; margin-bottom:1rem; display:flex; flex-direction:column; gap:0.35rem;">
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted);">Account Title:</span>
+            <strong style="color:#FFF;">${m.accountTitle}</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted);">Account Number:</span>
+            <strong class="tabular-nums" style="color:var(--gold-light);">${m.accountNumber}</strong>
+          </div>
+          ${m.iban ? `
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:var(--text-muted);">IBAN:</span>
+            <span class="tabular-nums" style="color:var(--text-secondary); font-size:0.75rem;">${m.iban}</span>
+          </div>` : ''}
+          <div style="margin-top:0.25rem; font-size:0.72rem; color:var(--text-secondary); line-height:1.3; border-top:1px dashed var(--border-subtle); padding-top:0.35rem;">
+            ${m.instructions || ''}
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn-outline-gold" style="flex:1; padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="window.EHMAdmin.openEditPaymentMethodModal('${m.id}')">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+          </button>
+          <button class="btn-outline-gold" style="flex:1; padding:0.35rem 0.6rem; font-size:0.75rem; color:${m.status === 'active' ? '#EF4444' : '#10B981'}; border-color:${m.status === 'active' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'};" onclick="window.EHMAdmin.togglePaymentMethodStatus('${m.id}')">
+            <i class="fa-solid ${m.status === 'active' ? 'fa-eye-slash' : 'fa-eye'}"></i> ${m.status === 'active' ? 'Disable' : 'Enable'}
+          </button>
+          <button class="btn-outline-gold" style="padding:0.35rem 0.6rem; font-size:0.75rem; color:#EF4444; border-color:rgba(239,68,68,0.3);" onclick="window.EHMAdmin.deletePaymentMethod('${m.id}')" title="Delete Gateway">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `
+      )
+      .join('');
+  }
+
+  openAddPaymentMethodModal() {
+    this.editingPaymentMethodId = null;
+    const titleEl = document.getElementById('pm-modal-title');
+    if (titleEl) titleEl.innerHTML = '<i class="fa-solid fa-plus" style="color:var(--gold-primary);"></i> Add Payment Gateway';
+
+    document.getElementById('pm-input-name').value = '';
+    document.getElementById('pm-input-title').value = '';
+    document.getElementById('pm-input-number').value = '';
+    document.getElementById('pm-input-iban').value = '';
+    document.getElementById('pm-input-instructions').value = 'Send payment and upload screenshot proof.';
+    document.getElementById('pm-input-status').value = 'active';
+
+    window.EHMApp.openModal('modal-admin-payment-method');
+  }
+
+  openEditPaymentMethodModal(id) {
+    const list = window.EHMStore.getPaymentMethods ? window.EHMStore.getPaymentMethods(false) : [];
+    const m = list.find((item) => item.id === id);
+    if (!m) return;
+
+    this.editingPaymentMethodId = id;
+    const titleEl = document.getElementById('pm-modal-title');
+    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-pen-to-square" style="color:var(--gold-primary);"></i> Edit ${m.name}`;
+
+    document.getElementById('pm-input-name').value = m.name || '';
+    document.getElementById('pm-input-title').value = m.accountTitle || '';
+    document.getElementById('pm-input-number').value = m.accountNumber || '';
+    document.getElementById('pm-input-iban').value = m.iban || '';
+    document.getElementById('pm-input-instructions').value = m.instructions || '';
+    document.getElementById('pm-input-status').value = m.status || 'active';
+
+    window.EHMApp.openModal('modal-admin-payment-method');
+  }
+
+  async savePaymentMethod() {
+    const name = document.getElementById('pm-input-name').value.trim();
+    const accountTitle = document.getElementById('pm-input-title').value.trim();
+    const accountNumber = document.getElementById('pm-input-number').value.trim();
+    const iban = document.getElementById('pm-input-iban').value.trim();
+    const instructions = document.getElementById('pm-input-instructions').value.trim();
+    const status = document.getElementById('pm-input-status').value;
+
+    if (!name || !accountTitle || !accountNumber) {
+      window.EHMApp.showToast('Please enter gateway name, account title, and account number.', 'error');
+      return;
+    }
+
+    const payload = {
+      name,
+      accountTitle,
+      accountNumber,
+      iban,
+      instructions,
+      status,
+      icon: name.toLowerCase().includes('bank') ? 'fa-building-columns' : 'fa-wallet'
+    };
+
+    if (this.editingPaymentMethodId) {
+      await window.EHMStore.updatePaymentMethod(this.editingPaymentMethodId, payload);
+      window.EHMApp.showToast(`Updated ${name} gateway settings!`, 'success');
+    } else {
+      await window.EHMStore.addPaymentMethod(payload);
+      window.EHMApp.showToast(`Added new gateway: ${name}!`, 'success');
+    }
+
+    window.EHMApp.closeModal('modal-admin-payment-method');
+    this.renderPaymentMethods();
+  }
+
+  async togglePaymentMethodStatus(id) {
+    const list = window.EHMStore.getPaymentMethods ? window.EHMStore.getPaymentMethods(false) : [];
+    const m = list.find((item) => item.id === id);
+    if (!m) return;
+
+    const newStatus = m.status === 'active' ? 'inactive' : 'active';
+    await window.EHMStore.updatePaymentMethod(id, { status: newStatus });
+    window.EHMApp.showToast(`${m.name} is now ${newStatus}.`, 'info');
+    this.renderPaymentMethods();
+  }
+
+  async deletePaymentMethod(id) {
+    if (!confirm('Are you sure you want to delete this payment method?')) return;
+    await window.EHMStore.deletePaymentMethod(id);
+    window.EHMApp.showToast('Payment method removed.', 'info');
+    this.renderPaymentMethods();
+  }
+
+  // 12. SYSTEM SETTINGS
   populateSettings() {
     const store = window.EHMStore;
     const eggSets = store.data.eggSettings || {};

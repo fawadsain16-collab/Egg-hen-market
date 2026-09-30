@@ -359,26 +359,172 @@ class UserDashboardController {
     const pkg = window.EHMStore.getHenPackageById(pkgId);
     if (!pkg) return;
 
-    this.selectedPackage = pkg;
-    const modal = document.getElementById('modal-buy-hen');
-    if (!modal) return;
+    // Direct to 5-step manual payment flow as requested
+    this.openManualPaymentModal(pkg.hens, pkg.name, pkg.id);
+  }
 
-    const titleEl = document.getElementById('buy-modal-title');
-    const hensEl = document.getElementById('buy-modal-hens');
-    const yieldEl = document.getElementById('buy-modal-yield');
-    const priceEl = document.getElementById('buy-modal-price');
-    const balanceEl = document.getElementById('buy-modal-balance');
-    const qtyInput = document.getElementById('buy-modal-quantity');
+  // ----------------- MANUAL PAYMENT & HEN BUYING (5-STEP FLOW) -----------------
+  openManualPaymentModal(hensCount = 10, pkgName = null, pkgId = null) {
+    this.manualProofImage = null;
+    this.manualPackageId = pkgId;
+    this.manualPackageName = pkgName;
 
-    if (titleEl) titleEl.textContent = pkg.name;
-    if (hensEl) hensEl.textContent = `${pkg.hens} Heritage Layers`;
-    if (yieldEl) yieldEl.textContent = `${pkg.dailyYield} Eggs / Day expected`;
-    if (priceEl) priceEl.textContent = `Rs. ${pkg.price.toLocaleString()}`;
-    if (balanceEl) balanceEl.textContent = `Rs. ${(this.user.balance || 0).toLocaleString()}`;
-    if (qtyInput) qtyInput.value = 1;
+    const qtyInput = document.getElementById('manual-hens-qty');
+    if (qtyInput) qtyInput.value = hensCount || 10;
 
-    this.updateBuyTotal();
-    window.EHMApp.openModal('modal-buy-hen');
+    const trxInput = document.getElementById('manual-trx-id');
+    if (trxInput) trxInput.value = '';
+
+    const previewWrap = document.getElementById('manual-upload-preview-wrap');
+    const placeholder = document.getElementById('manual-upload-placeholder');
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'block';
+
+    const fileInput = document.getElementById('manual-proof-file');
+    if (fileInput) fileInput.value = '';
+
+    this.renderManualGateways();
+    this.calcManualPayment();
+    window.EHMApp.openModal('modal-manual-payment');
+  }
+
+  setManualHens(qty) {
+    const input = document.getElementById('manual-hens-qty');
+    if (input) {
+      input.value = Math.max(1, qty);
+      this.calcManualPayment();
+    }
+  }
+
+  adjustManualHens(delta) {
+    const input = document.getElementById('manual-hens-qty');
+    if (input) {
+      const current = parseInt(input.value) || 10;
+      input.value = Math.max(1, current + delta);
+      this.calcManualPayment();
+    }
+  }
+
+  calcManualPayment() {
+    const input = document.getElementById('manual-hens-qty');
+    const qty = Math.max(1, parseInt(input ? input.value : 10) || 10);
+    const unitPrice = 580;
+    const totalAmount = qty * unitPrice;
+    const dailyEggs = (qty * 1.05).toFixed(1);
+
+    const totalEl = document.getElementById('manual-payment-total');
+    if (totalEl) totalEl.textContent = `Rs. ${totalAmount.toLocaleString()}`;
+
+    const yieldEl = document.getElementById('manual-payment-yield');
+    if (yieldEl) yieldEl.textContent = `+${dailyEggs} Eggs / Day`;
+  }
+
+  renderManualGateways() {
+    const container = document.getElementById('manual-gateways-container');
+    if (!container) return;
+
+    const gateways = (window.EHMStore && window.EHMStore.getPaymentMethods)
+      ? window.EHMStore.getPaymentMethods(true)
+      : [];
+
+    if (!this.selectedManualGatewayId && gateways.length > 0) {
+      this.selectedManualGatewayId = gateways[0].id;
+    }
+
+    container.innerHTML = gateways.map((g) => `
+      <div class="payment-method-card ${g.id === this.selectedManualGatewayId ? 'active' : ''}" onclick="window.EHMUser.selectManualGateway('${g.id}')">
+        <span class="payment-method-icon" style="color:${g.color || 'var(--gold-primary)'};">
+          <i class="fa-solid ${g.icon || 'fa-wallet'}"></i>
+        </span>
+        <strong style="font-size:0.82rem; color:#FFF; display:block;">${g.name}</strong>
+        <span style="font-size:0.68rem; color:var(--text-muted);">${g.accountTitle || 'Official'}</span>
+      </div>
+    `).join('');
+
+    this.updateManualSelectedAccountInfo();
+  }
+
+  selectManualGateway(id) {
+    this.selectedManualGatewayId = id;
+    this.renderManualGateways();
+  }
+
+  updateManualSelectedAccountInfo() {
+    const gateways = (window.EHMStore && window.EHMStore.getPaymentMethods)
+      ? window.EHMStore.getPaymentMethods(false)
+      : [];
+    const g = gateways.find((item) => item.id === this.selectedManualGatewayId) || gateways[0];
+    if (!g) return;
+
+    const titleEl = document.getElementById('manual-acc-title');
+    const numEl = document.getElementById('manual-acc-number');
+    const instEl = document.getElementById('manual-acc-instructions');
+
+    if (titleEl) titleEl.textContent = g.accountTitle || 'Egg Hen Market Official';
+    if (numEl) numEl.textContent = g.accountNumber || '0327272727';
+    if (instEl) instEl.textContent = g.instructions || 'Send exact payment via App and upload receipt screenshot.';
+  }
+
+  handleManualProofUpload(input) {
+    if (!input || !input.files || input.files.length === 0) return;
+    const file = input.files[0];
+    if (!file.type.startsWith('image/')) {
+      window.EHMApp.showToast('Please select a valid image screenshot (JPG, PNG).', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.manualProofImage = e.target.result;
+      const previewImg = document.getElementById('manual-upload-preview-img');
+      const previewWrap = document.getElementById('manual-upload-preview-wrap');
+      const placeholder = document.getElementById('manual-upload-placeholder');
+      if (previewImg) previewImg.src = this.manualProofImage;
+      if (previewWrap) previewWrap.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+      window.EHMApp.showToast('Screenshot attached successfully!', 'success');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async submitManualPaymentOrder() {
+    const qtyInput = document.getElementById('manual-hens-qty');
+    const hensCount = Math.max(1, parseInt(qtyInput ? qtyInput.value : 10) || 10);
+    const totalAmount = hensCount * 580;
+
+    const trxInput = document.getElementById('manual-trx-id');
+    const trxId = trxInput ? trxInput.value.trim() : '';
+
+    if (!trxId) {
+      window.EHMApp.showToast('براہ کرم ٹرانزیکشن آئی ڈی (Trx ID) درج کریں!', 'error');
+      if (trxInput) trxInput.focus();
+      return;
+    }
+
+    const gateways = (window.EHMStore && window.EHMStore.getPaymentMethods)
+      ? window.EHMStore.getPaymentMethods(false)
+      : [];
+    const g = gateways.find((item) => item.id === this.selectedManualGatewayId) || gateways[0];
+    const methodName = g ? g.name : 'EasyPaisa';
+
+    const pkgName = this.manualPackageName || `${hensCount} Hens Commercial Flock`;
+    const res = await window.EHMStore.buyHensManual(
+      hensCount,
+      totalAmount,
+      methodName,
+      trxId,
+      this.manualProofImage,
+      pkgName,
+      this.manualPackageId
+    );
+
+    if (res && res.success) {
+      window.EHMApp.closeModal('modal-manual-payment');
+      window.EHMApp.showToast(res.message || 'Payment request submitted! Admin will verify and activate your hens.', 'success');
+      this.renderAll();
+    } else {
+      window.EHMApp.showToast((res && res.message) || 'Error submitting order', 'error');
+    }
   }
 
   updateBuyTotal() {
